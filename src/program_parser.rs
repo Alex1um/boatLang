@@ -1,4 +1,14 @@
-use pest::Parser;
+use pest::{iterators::Pairs, Parser};
+use crate::expr_parser::BoatExpr;
+
+type Block = Vec<Statement>;
+
+#[derive(Debug)]
+pub enum Statement {
+    If { expr: BoatExpr, block: Block, else_block: Option<Block> },
+    While { expr: BoatExpr, block: Block },
+    Assign { var_name: String, expr: BoatExpr },
+}
 
 #[derive(Debug)]
 pub struct FunctionDefinition {
@@ -29,9 +39,19 @@ pub struct ProgramParser;
 pub struct Program {
     pub pin_definitions: Vec<PinDefinition>,
     pub functions: Vec<FunctionDefinition>,
+    pub block: Block,
+}
+
+pub fn parse_definitions(pairs: Pairs<Rule>) -> Vec<PinDefinition> {
+    let mut definitions = Vec::new();
+    for pair in pairs {
+        println!("{:#?}", pair);
+    }
+    definitions
 }
 
 pub fn parse_program(s: &str) {
     let parsed = ProgramParser::parse(Rule::definition_section, s);
     println!("{:#?}", parsed);
+
 }
