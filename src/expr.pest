@@ -1,0 +1,28 @@
+integer = @{ ASCII_DIGIT+ }
+
+string = ${ "\"" ~ inner ~ "\"" }
+inner = @{ char* }
+char = {
+    !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
+    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
+}
+
+atom = _{ integer | string | function | name | "(" ~ expr ~ ")" }
+
+bin_op = _{ add | subtract | multiply | divide | concat }
+    add = { "+" }
+    subtract = { "-" }
+    multiply = { "*" }
+    divide = { "/" }
+    concat = { ".." }
+
+expr = { atom ~ (bin_op ~ atom)* }
+
+WHITESPACE = _{ " " }
+
+equation = _{ SOI ~ expr ~ EOI }
+
+
+// name = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+function = { name ~ "(" ~ expr ~ ("," ~ expr)* ~ ")" }

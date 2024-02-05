@@ -1,7 +1,36 @@
-use pest::pratt_parser::PrattParser;
+use pest::{Parser};
+use pest::pratt_parser::{PrattParser};
 use pest::iterators::Pairs;
-use crate::program_parser::Rule;
-use crate::boat_program::{BoatExpr, BoatOp};
+
+
+#[derive(Debug)]
+pub enum BoatExpr {
+    Value(String),
+    Var(String),
+    Function {
+        name: String,
+        args: Vec<BoatExpr>,
+    },
+    BinOp {
+        lhs: Box<BoatExpr>,
+        op: BoatOp,
+        rhs: Box<BoatExpr>,
+    },
+}
+
+#[derive(Debug)]
+pub enum BoatOp {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Conc,
+}
+
+#[derive(pest_derive::Parser)]
+#[grammar = "expr.pest"]
+#[grammar = "base.pest"]
+pub struct BoatExprParser;
 
 lazy_static::lazy_static! {
     static ref BOAT_EXPR_PARSER: PrattParser<Rule> = {
@@ -11,12 +40,9 @@ lazy_static::lazy_static! {
         // Precedence is defined lowest to highest
         PrattParser::new()
             // Addition and subtract have equal precedence
-            .op(Op::infix(land, Left) | Op::infix(lor, Left))
-            .op(Op::infix(gt, Left) | Op::infix(lt, Left) | Op::infix(eq, Left))
-            .op(Op::infix(concat, Left))
             .op(Op::infix(add, Left) | Op::infix(subtract, Left))
             .op(Op::infix(multiply, Left) | Op::infix(divide, Left))
-            .op(Op::prefix(unary_minus))
+            .op(Op::infix(concat, Left))
     };
 }
 
@@ -42,11 +68,6 @@ pub fn parse_pairs(pairs: Pairs<Rule>) -> BoatExpr {
                 Rule::multiply => BoatOp::Mul,
                 Rule::divide => BoatOp::Div,
                 Rule::concat => BoatOp::Conc,
-                Rule::gt => BoatOp::Gt,
-                Rule::lt => BoatOp::Lt,
-                Rule::eq => BoatOp::Eq,
-                Rule::land => BoatOp::Mul,
-                Rule::lor => BoatOp::Add,
                 _ => unreachable!(),
             };
             BoatExpr::BinOp {
@@ -55,8 +76,9 @@ pub fn parse_pairs(pairs: Pairs<Rule>) -> BoatExpr {
                 rhs: Box::new(rhs),
             }
         })
-        .map_prefix(|op, exp| {
-            BoatExpr::BinOp { lhs: Box::new(BoatExpr::Value("0".to_owned())), op: BoatOp::Sub, rhs: Box::new(exp) }
-        })
         .parse(pairs)
+}
+
+pub fn parse_string(s: &str) -> BoatExpr {
+    parse_pairs(BoatExprParser::parse(Rule::equation, s).unwrap().next().unwrap().into_inner())
 }

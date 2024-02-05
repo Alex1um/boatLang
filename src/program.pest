@@ -1,61 +1,8 @@
-// base
-
-name = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
-
-WHITESPACE = _{ " " | "\n" | "\t" }
-COMMENT = _{ "//" ~ (!"\n" ~ ANY)*  }
-
-// define section
-
 pin = @{ ASCII_DIGIT+ }
 in_f = { "in" ~ "(" ~ pin ~ ")" }
 out_f = { "out" ~ "(" ~ pin ~ ")" }
 
-definition = { name ~ "=" ~ (in_f | out_f) ~ ";" }
+definition = _{ name ~ "=" ~ (in_f | out_f) }
 
-definition_section = { definition* }
+definition_section = _{ definition* }
 
-// expr
-integer = @{ "-"? ~ (ASCII_DIGIT+ | (ASCII_DIGIT* ~ "." ~ ASCII_DIGIT+) | (ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT*)) }
-
-string = ${ "\"" ~ inner ~ "\"" }
-inner = @{ char* }
-char = {
-    !("\"" | "\\") ~ ANY
-    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
-    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
-}
-
-unary_minus = { "-" }
-atom = _{ integer | string | (unary_minus? ~ (string | function | name | "(" ~ expr ~ ")")) }
-
-bin_op = _{ add | subtract | multiply | divide | concat | gt | lt | eq | land | lor }
-    add = { "+" }
-    subtract = { "-" }
-    multiply = { "*" }
-    divide = { "/" }
-    concat = { ".." }
-    gt = { ">" }
-    lt = { "<" }
-    eq = { "==" }
-    land = { "&&" }
-    lor = { "||" }
-
-expr = { atom ~ (bin_op ~ atom)* }
-// equation = _{ SOI ~ expr ~ EOI }
-function = { name ~ "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
-
-// program
-
-if = { "if" ~ "(" ~ expr ~ ")" ~ block ~ ("else" ~ block)? }
-while = { "while" ~ "(" ~ expr ~ ")" ~ block }
-assign = { name ~ "=" ~ expr ~ ";" }
-expr_statement = _{ expr ~ ";" }
-function_definition = { "function" ~ name ~ "(" ~ (name ~ ("," ~ name)*)? ~ ")" ~ block }
-
-
-statement = _{ function_definition | if | while | assign | expr_statement }
-
-block = { "{" ~ statement* ~ "}" | statement }
-
-program = { SOI ~ definition_section ~ block ~ EOI }
