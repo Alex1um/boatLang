@@ -1,0 +1,8 @@
+pin = @{ ASCII_DIGIT+ }
+in_f = { "in" ~ "(" ~ pin ~ ")" }
+out_f = { "out" ~ "(" ~ pin ~ ")" }
+
+definition = _{ name ~ "=" ~ (in_f | out_f) }
+
+definition_section = _{ definition* }
+
