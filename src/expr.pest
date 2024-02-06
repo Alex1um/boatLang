@@ -10,18 +10,19 @@ char = {
 
 atom = _{ integer | string | function | name | "(" ~ expr ~ ")" }
 
-bin_op = _{ add | subtract | multiply | divide | concat }
+bin_op = _{ add | subtract | multiply | divide | concat | gt | eq }
     add = { "+" }
     subtract = { "-" }
     multiply = { "*" }
     divide = { "/" }
     concat = { ".." }
+    gt = { ">" }
+    eq = { "==" }
 
 expr = { atom ~ (bin_op ~ atom)* }
 
-WHITESPACE = _{ " " }
 
-equation = _{ SOI ~ expr ~ EOI }
+// equation = _{ SOI ~ expr ~ EOI }
 
 
 // name = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }

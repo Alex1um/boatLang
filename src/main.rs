@@ -4,14 +4,25 @@ mod expr_parser;
 mod expr_optimizer;
 mod expr_translator;
 mod program_parser;
+mod boat_instructions;
 
 fn main() {
-    // let parsed = expr_parser::parse_string("2 + 3 * 4 / 9");
-    // println!("{:?}", parsed);
-    // let optimized = expr_optimizer::optimize_expr(parsed);
-    // println!("{:?}", optimized);
-    // let translated = expr_translator::translate_expr(optimized, &HashMap::new());
-    // println!("{:?}", translated);
-    // println!("{}", expr_translator::translated_to_string(translated));
-    program_parser::parse_program("print=out(1)")
+    program_parser::parse_program("
+    print=out(1);
+    input=in(1);
+    {
+        a = 1 + 1;
+        while (10 - a > 0) {
+            a = a + 1;
+        }
+        if (a == 10) {
+            a = 0;
+        }
+        if (a == 0) {
+            b = 1;
+        } else {
+            b = 2;
+        }
+    }
+    ");
 }
