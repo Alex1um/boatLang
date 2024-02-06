@@ -11,10 +11,10 @@ lazy_static::lazy_static! {
         // Precedence is defined lowest to highest
         PrattParser::new()
             // Addition and subtract have equal precedence
+            .op(Op::infix(gt, Left) | Op::infix(eq, Left))
+            .op(Op::infix(concat, Left))
             .op(Op::infix(add, Left) | Op::infix(subtract, Left))
             .op(Op::infix(multiply, Left) | Op::infix(divide, Left))
-            .op(Op::infix(concat, Left))
-            .op(Op::infix(gt, Left) | Op::infix(eq, Left))
     };
 }
 
