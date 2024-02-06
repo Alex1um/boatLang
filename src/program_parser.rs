@@ -47,7 +47,7 @@ pub fn parse_block(pairs: Pairs<Rule>) -> Block {
                 Statement::If {
                     expr: parse_pairs(inner.next().unwrap().into_inner()),
                     block: parse_block(inner.next().unwrap().into_inner()),
-                    else_block: None
+                    else_block: inner.next().map(|pair| parse_block(pair.into_inner()))
                 }
             },
             Rule::r#while => {
