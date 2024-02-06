@@ -1,6 +1,7 @@
 use pest::{Parser};
 use pest::pratt_parser::{PrattParser};
 use pest::iterators::Pairs;
+use crate::program_parser::Rule;
 
 
 #[derive(Debug)]
@@ -25,12 +26,9 @@ pub enum BoatOp {
     Mul,
     Div,
     Conc,
+    Gt,
+    Eq,
 }
-
-#[derive(pest_derive::Parser)]
-#[grammar = "expr.pest"]
-#[grammar = "base.pest"]
-pub struct BoatExprParser;
 
 lazy_static::lazy_static! {
     static ref BOAT_EXPR_PARSER: PrattParser<Rule> = {
@@ -43,6 +41,7 @@ lazy_static::lazy_static! {
             .op(Op::infix(add, Left) | Op::infix(subtract, Left))
             .op(Op::infix(multiply, Left) | Op::infix(divide, Left))
             .op(Op::infix(concat, Left))
+            .op(Op::infix(gt, Left) | Op::infix(eq, Left))
     };
 }
 
@@ -68,6 +67,8 @@ pub fn parse_pairs(pairs: Pairs<Rule>) -> BoatExpr {
                 Rule::multiply => BoatOp::Mul,
                 Rule::divide => BoatOp::Div,
                 Rule::concat => BoatOp::Conc,
+                Rule::gt => BoatOp::Gt,
+                Rule::eq => BoatOp::Eq,
                 _ => unreachable!(),
             };
             BoatExpr::BinOp {
@@ -77,8 +78,4 @@ pub fn parse_pairs(pairs: Pairs<Rule>) -> BoatExpr {
             }
         })
         .parse(pairs)
-}
-
-pub fn parse_string(s: &str) -> BoatExpr {
-    parse_pairs(BoatExprParser::parse(Rule::equation, s).unwrap().next().unwrap().into_inner())
 }

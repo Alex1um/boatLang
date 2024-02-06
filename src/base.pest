@@ -1,2 +1,4 @@
 
 name = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+
+WHITESPACE = _{ " " | "\n" | "\t" }

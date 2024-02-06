@@ -2,7 +2,16 @@ pin = @{ ASCII_DIGIT+ }
 in_f = { "in" ~ "(" ~ pin ~ ")" }
 out_f = { "out" ~ "(" ~ pin ~ ")" }
 
-definition = _{ name ~ "=" ~ (in_f | out_f) }
+definition = { name ~ "=" ~ (in_f | out_f) ~ ";" }
 
-definition_section = _{ definition* }
+definition_section = { definition* }
 
+if = { "if" ~ "(" ~ expr ~ ")" ~ block ~ ("else" ~ block)? }
+while = { "while" ~ "(" ~ expr ~ ")" ~ block }
+assign = { name ~ "=" ~ expr ~ ";" }
+
+statement = _{ if | while | assign }
+
+block = { "{" ~ statement* ~ "}" }
+
+program = { SOI ~ definition_section ~ block ~ EOI }
