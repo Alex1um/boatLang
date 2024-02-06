@@ -1,7 +1,7 @@
-use crate::boat_instructions::{BoatArg, BoatIns};
+use crate::boat_instructions::BoatIns;
 use std::collections::HashMap;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BoatExpr {
     Value(String),
     Var(String),
@@ -16,14 +16,13 @@ pub enum BoatExpr {
     },
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BoatOp {
     Add,
     Sub,
     Mul,
     Div,
     Conc,
-    Lt,
     Gt,
     Eq,
 }
@@ -33,25 +32,28 @@ pub enum Statement {
     If { expr: BoatExpr, block: Block, else_block: Option<Block> },
     While { expr: BoatExpr, block: Block },
     Assign { var_name: String, expr: BoatExpr },
-    Reassign { var_name: String, expr: BoatExpr },
-    FunctionDefinition { name: String, arg_names: Vec<String>, block: Block },
-    Expr(BoatExpr),
 }
 
 pub type Block = Vec<Statement>;
 
+#[derive(Debug)]
 pub enum Function {
+    KeyFunction {
+        key: String,
+        arg_names: Vec<String>
+    },
     InProgram {
         begin_pos: u32,
-        arg_names: Vec<String>,
+        arg_names: Vec<String>
     },
     Predefined {
-        translator: Box<dyn Fn(Vec<BoatArg>) -> Vec<BoatIns>>
+        instructions: Vec<BoatIns>
     }
 }
 
 pub type Functions = HashMap<String, Function>;
 
+#[derive(Debug)]
 pub struct Program {
     pub functions: Functions,
     pub block: Block,

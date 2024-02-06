@@ -1,93 +1,60 @@
-use crate::boat_instructions::{BoatIns, BoatArg, BoatCmd};
+
+use std::collections::HashMap;
+
+use crate::boat_instructions::BoatIns;
 use crate::expr_translator::translate_expr;
-use crate::boat_program::{Block, BoatExpr, Function, Functions, Program, Statement};
+use crate::boat_program::{Statement, Functions, Block, Program};
 
 // current_ins_i = index of last instruction + 1
-fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mut Functions) -> Vec<BoatIns> {
+fn translate_statement(s: Statement, current_ins_i: u32, functions: &Functions) -> Vec<BoatIns> {
     match s {
-        Statement::Reassign { var_name, expr } => {
-            let mut instructions = Vec::<BoatIns>::new();
-            let arg = translate_expr(expr, instruction_index, &mut instructions, functions);
-            instructions.push(BoatIns { cmd: BoatCmd::KVReSet, args: vec![BoatArg::Const(var_name), arg] });
-            *instruction_index += 1;
-            instructions
-        }
         Statement::Assign { var_name, expr } => {
-            let mut instructions = Vec::<BoatIns>::new();
-            let arg = translate_expr(expr, instruction_index, &mut instructions, functions);
-            // instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const(var_name.clone())] });
-            // *instruction_index += 1;
-            instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(var_name), arg] });
-            *instruction_index += 1;
-            instructions
+            let mut expr = translate_expr(expr, functions);
+            expr.push(BoatIns::KVSet { key: var_name });
+            expr
         }
         Statement::If { expr, block, else_block } => {
             let mut statement = Vec::<BoatIns>::new();
-            let if_arg = translate_expr(expr, instruction_index, &mut statement, functions);
-            *instruction_index += 1; // cmd and eq
-            let block = translate_block(block, instruction_index, functions);
-            // *instruction_index += block.len() as u32;
-            
-            if else_block.is_some() {
-                *instruction_index += 1;
-            }
-            statement.push(BoatIns {cmd: BoatCmd::Cmp, args: vec![if_arg, BoatArg::Const(instruction_index.to_string())]});
-            statement.extend(block);
-
+            let mut expr = translate_expr(expr, functions);
+            let mut block = translate_block(block, functions);
+            statement.append(&mut expr);
+            statement.push(BoatIns::Push { value: "0".to_owned() });
+            statement.push(BoatIns::Eq);
+            statement.push(BoatIns::Cmp { ins: current_ins_i + expr.len() as u32 + block.len() as u32 + 2 });
+            statement.append(&mut block);
             if let Some(else_block) = else_block {
-                let else_block = translate_block(else_block, instruction_index, functions);
-                statement.push(BoatIns { cmd: BoatCmd::Goto, args: vec![ BoatArg::Const(instruction_index.to_string()) ] });
-                // *instruction_index += else_block.len() as u32;
-                statement.extend(else_block);
+                let mut else_block = translate_block(else_block, functions);
+                statement.push(BoatIns::Goto { ins: current_ins_i + expr.len() as u32 + block.len() as u32 + else_block.len() as u32 + 2 });
+                statement.append(&mut else_block);
             }
             statement
         }
         Statement::While { expr, block } => {
             let mut statement = Vec::<BoatIns>::new();
-            let while_begin_index = *instruction_index;
-            let while_arg = translate_expr(expr, instruction_index, &mut statement, functions);
-            *instruction_index += 1;
-            let block = translate_block(block, instruction_index, functions);
-            statement.push(BoatIns { cmd: BoatCmd::Cmp, args: vec![while_arg, BoatArg::Const((*instruction_index + 1u32).to_string())] });
-            statement.extend(block);
-            statement.push(BoatIns { cmd: BoatCmd::Goto, args: vec![ BoatArg::Const(while_begin_index.to_string()) ] });
-            *instruction_index += 1;
+            let mut expr = translate_expr(expr, functions);
+            let mut block = translate_block(block, functions);
+            statement.append(&mut expr);
+            statement.push(BoatIns::Push { value: "0".to_owned() });
+            statement.push(BoatIns::Eq);
+            statement.push(BoatIns::Cmp { ins: current_ins_i + expr.len() as u32 + block.len() as u32 + 3 });
+            statement.append(&mut block);
+            statement.push(BoatIns::Goto { ins: current_ins_i });
             statement
         }
-        Statement::Expr(expr) => {
-            let mut instructions = Vec::<BoatIns>::new();
-            let is_push_needed = matches!(expr, BoatExpr::Value(_) | BoatExpr::Var(_));
-            let arg = translate_expr(expr, instruction_index, &mut instructions, functions);
-            if is_push_needed {
-                *instruction_index += 1;
-                instructions.push(BoatIns { cmd: BoatCmd::Push, args: vec![arg] });
-            }
-            instructions
-        }
-        Statement::FunctionDefinition { name, arg_names, block } => {
-            let mut instructions = Vec::<BoatIns>::new();
-            
-            *instruction_index += 1;
-            functions.insert(name, Function::InProgram { begin_pos: *instruction_index, arg_names });
-
-            instructions.extend(translate_block(block, instruction_index, functions));
-            instructions.push(BoatIns { cmd: BoatCmd::Goto, args: vec![BoatArg::FromKVS("return".to_string())] });
-            *instruction_index += 1;
-            instructions.insert(0, BoatIns { cmd: BoatCmd::Goto, args: vec![BoatArg::Const(instruction_index.to_string())] });
-            instructions
-        }
+        _ => unimplemented!("Unsupported statement: {:?}", s),
     }
 }
 
-pub fn translate_block(block: Block, instruction_index: &mut u32, functions: &mut Functions) -> Vec<BoatIns> {
-    block.into_iter().flat_map(|statement| {
-        
-        // instruction_index += translated.len() as u32;
-        translate_statement(statement, instruction_index, functions)
-    }).collect()
+pub fn translate_block(block: Block, functions: &Functions) -> Vec<BoatIns> {
+    let mut instruction_index = 1u32;
+    block.into_iter().map(|statement| {
+        let translated = translate_statement(statement, instruction_index, functions);
+        instruction_index += translated.len() as u32;
+        translated
+    }).flatten().collect()
 }
 
 pub fn translate_program(program: Program) -> Vec<BoatIns> {
-    let Program { mut functions, block } = program;
-    translate_block(block, &mut 1, &mut functions)
+    let Program { functions, block } = program;
+    translate_block(block, &functions)
 }

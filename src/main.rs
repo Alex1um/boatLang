@@ -5,9 +5,11 @@ mod expr_optimizer;
 mod expr_translator;
 mod program_parser;
 mod boat_instructions;
+mod boat_program;
+mod program_translator;
 
 fn main() {
-    program_parser::parse_program("
+    let program = program_parser::parse_program("
     print=out(1);
     input=in(1);
     {
@@ -25,4 +27,8 @@ fn main() {
         }
     }
     ");
+    let translated = crate::program_translator::translate_program(program);
+    println!("{:#?}", translated);
+    let text = crate::boat_instructions::translated_to_string(translated);
+    println!("{}", text);
 }

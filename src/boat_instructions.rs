@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BoatIns {
     Push { value: String }, // Push value on top of stack
     Pop, // Pop value from top of stack
@@ -17,6 +17,7 @@ pub enum BoatIns {
     KVGet { key: String }, // Push value from key-value storage to top of stack
     KVDel { key: String }, // Delete value by key from key-value storage
     Sleep { seconds: String }, // sleep for passed amount of time
+    Cmp { ins: u32 }, // Pop value from top of stack and goto instruction if it is 1
     Eq, // Pop two values from top of stack and push 1 if they are equal or 0
     Gt, // Pop two values from top of stack and push 1 if the first is greater than the second or 0
 }
@@ -28,6 +29,7 @@ impl Display for BoatIns {
             Push { value } => write!(f, "p {};", value),
             Pop => write!(f, "d;"),
             Goto { ins } => write!(f, "g {};", ins),
+            Cmp { ins } => write!(f, "c {};", ins),
             Clone => write!(f, "r;"),
             Input { pin } => write!(f, "i {};", pin),
             Output { pin } => write!(f, "o {};", pin),
