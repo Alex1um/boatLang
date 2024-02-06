@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 mod expr_parser;
 mod expr_optimizer;
 mod expr_translator;
@@ -25,6 +23,7 @@ fn main() {
         } else {
             b = 2;
         }
+        print(b);
     }
     ");
     let translated = crate::program_translator::translate_program(program);

@@ -32,6 +32,7 @@ pub enum Statement {
     If { expr: BoatExpr, block: Block, else_block: Option<Block> },
     While { expr: BoatExpr, block: Block },
     Assign { var_name: String, expr: BoatExpr },
+    Expr(BoatExpr),
 }
 
 pub type Block = Vec<Statement>;
