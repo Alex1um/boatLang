@@ -1,21 +1,9 @@
+use std::collections::HashMap;
+
 use pest::{iterators::Pairs, Parser};
-use crate::expr_parser::{BoatExpr, parse_pairs};
+use crate::{boat_instructions::BoatIns, expr_parser::parse_pairs, boat_program::{Program, Block, Statement, Function}};
 
-type Block = Vec<Statement>;
 
-#[derive(Debug)]
-pub enum Statement {
-    If { expr: BoatExpr, block: Block, else_block: Option<Block> },
-    While { expr: BoatExpr, block: Block },
-    Assign { var_name: String, expr: BoatExpr },
-}
-
-#[derive(Debug)]
-pub struct FunctionDefinition {
-    pub name: String,
-    pub args: Vec<String>,
-    pub place: u32,
-}
 
 #[derive(Debug)]
 pub enum PinType {
@@ -35,14 +23,6 @@ pub struct PinDefinition {
 #[grammar = "base.pest"]
 pub struct ProgramParser;
 
-
-#[derive(Debug)]
-pub struct Program {
-    pub pin_definitions: Vec<PinDefinition>,
-    pub functions: Vec<FunctionDefinition>,
-    pub block: Block,
-}
-
 pub fn parse_definitions(pairs: Pairs<Rule>) -> Vec<PinDefinition> {
     pairs.into_iter().map(|pair| {
         let mut inner = pair.into_inner();
@@ -59,7 +39,7 @@ pub fn parse_definitions(pairs: Pairs<Rule>) -> Vec<PinDefinition> {
     }).collect()
 }
 
-pub fn parse_block(pairs: Pairs<Rule>) -> Vec<Statement> {
+pub fn parse_block(pairs: Pairs<Rule>) -> Block {
     pairs.into_iter().map(|pair| {
         match pair.as_rule() {
             Rule::r#if => {
@@ -89,15 +69,21 @@ pub fn parse_block(pairs: Pairs<Rule>) -> Vec<Statement> {
     }).collect()
 }
 
-pub fn parse_program(s: &str) {
+pub fn parse_program(s: &str) -> Program {
+    let mut functions = HashMap::<String, Function>::new();
     let mut parsed = ProgramParser::parse(Rule::program, s).unwrap();
     let mut program = parsed.next().unwrap().into_inner();
     let definitions_pairs = program.next().unwrap().into_inner();
     let main_block_pairs = program.next().unwrap().into_inner();
-    // println!("{:#?}", definitions_pairs);
-    // println!("{:#?}", main_block_pairs);
     let pin_definitions = parse_definitions(definitions_pairs);
-    println!("{:#?}", pin_definitions);
+    for pin_def in pin_definitions {
+        functions.insert(pin_def.name, Function::Predefined { instructions: vec![
+            match pin_def.pin {
+                PinType::In(in_num) => BoatIns::Input { pin: in_num },
+                PinType::Out(out_num) => BoatIns::Output { pin: out_num }
+            }
+        ] });
+    }
     let block = parse_block(main_block_pairs);
-    println!("{:#?}", block);
+    Program { functions: functions, block: block }
 }

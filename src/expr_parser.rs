@@ -1,34 +1,8 @@
-use pest::{Parser};
-use pest::pratt_parser::{PrattParser};
+use pest::Parser;
+use pest::pratt_parser::PrattParser;
 use pest::iterators::Pairs;
 use crate::program_parser::Rule;
-
-
-#[derive(Debug)]
-pub enum BoatExpr {
-    Value(String),
-    Var(String),
-    Function {
-        name: String,
-        args: Vec<BoatExpr>,
-    },
-    BinOp {
-        lhs: Box<BoatExpr>,
-        op: BoatOp,
-        rhs: Box<BoatExpr>,
-    },
-}
-
-#[derive(Debug)]
-pub enum BoatOp {
-    Add,
-    Sub,
-    Mul,
-    Div,
-    Conc,
-    Gt,
-    Eq,
-}
+use crate::boat_program::{BoatExpr, BoatOp};
 
 lazy_static::lazy_static! {
     static ref BOAT_EXPR_PARSER: PrattParser<Rule> = {
