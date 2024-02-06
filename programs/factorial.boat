@@ -6,7 +6,9 @@ input = in(1);
     sum = 1;
     while (max > i) {
         sum = sum * i;
+        print(i);
         i = i + 1;
+        print(sum);
     }
     print("result:");
     print(sum);

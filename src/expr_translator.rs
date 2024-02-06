@@ -35,8 +35,8 @@ pub fn translate_expr(expr: BoatExpr, function_map: &Functions) -> Vec<BoatIns> 
             let lhs_instructions = translate_expr(*lhs, function_map);
             let rhs_instructions = translate_expr(*rhs, function_map);
             let mut instructions = Vec::with_capacity(lhs_instructions.len() + rhs_instructions.len() + 1);
-            instructions.extend(lhs_instructions);
             instructions.extend(rhs_instructions);
+            instructions.extend(lhs_instructions);
             instructions.push(op.into());
             instructions
         },

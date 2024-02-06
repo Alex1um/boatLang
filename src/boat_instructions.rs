@@ -38,7 +38,7 @@ impl Display for BoatIns {
             Mul => write!(f, "*;"),
             Div => write!(f, "/;"),
             Conc => write!(f, "..;"),
-            KVSet { key } => write!(f, "ks {};", key),
+            KVSet { key } => write!(f, "ka {};", key),
             KVGet { key } => write!(f, "kg {};", key),
             KVDel { key } => write!(f, "kd {};", key),
             Sleep { seconds } => write!(f, "s {};", seconds),
@@ -54,4 +54,10 @@ pub fn translated_to_string(inses: Vec<BoatIns>) -> String {
         .map(|ins| format!("{}", ins))
         .collect::<Vec<String>>()
         .join("")
+}
+
+pub fn translated_debug(inses: &Vec<BoatIns>) {
+    for (i, ins) in inses.iter().enumerate() {
+        println!("{}| {}", i + 1, ins);
+    }
 }

@@ -5,29 +5,19 @@ mod program_parser;
 mod boat_instructions;
 mod boat_program;
 mod program_translator;
+use std::env;
+use std::fs;
 
 fn main() {
-    let program = program_parser::parse_program("
-    print=out(1);
-    input=in(1);
-    {
-        a = 1 + 1;
-        while (10 - a > 0) {
-            a = a + 1;
-        }
-        if (a == 10) {
-            a = 0;
-        }
-        if (a == 0) {
-            b = 1;
-        } else {
-            b = 2;
-        }
-        print(b);
-    }
-    ");
+    
+    let args: Vec<String> = env::args().collect();
+    let file_path = &args[1];
+
+    // Open the file, read it, and parse it
+    let contents = fs::read_to_string(file_path).expect("Unable to read the file");
+    let program = program_parser::parse_program(&contents);
     let translated = crate::program_translator::translate_program(program);
-    println!("{:#?}", translated);
+    crate::boat_instructions::translated_debug(&translated);
     let text = crate::boat_instructions::translated_to_string(translated);
     println!("{}", text);
 }
