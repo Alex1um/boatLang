@@ -1,5 +1,3 @@
-use std::{collections::HashMap};
-
 use crate::boat_program::{BoatExpr, BoatOp, Function, Functions};
 use crate::boat_instructions::BoatIns;
 
@@ -25,7 +23,11 @@ pub fn translate_expr(expr: BoatExpr, function_map: &Functions) -> Vec<BoatIns> 
         BoatExpr::Function { name, args } => {
             let function = function_map.get(&name).expect("Function is found");
             match function {
-                Function::Predefined { instructions } => instructions.clone(),
+                Function::Predefined { instructions } => {
+                    let mut translated: Vec<BoatIns> = args.into_iter().flat_map(|arg| translate_expr(arg, function_map)).collect();
+                    translated.extend(instructions.clone());
+                    translated
+                },
                 _ => unimplemented!("That type of function is unimplemented")
             }
         },

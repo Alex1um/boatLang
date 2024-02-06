@@ -9,8 +9,9 @@ definition_section = { definition* }
 if = { "if" ~ "(" ~ expr ~ ")" ~ block ~ ("else" ~ block)? }
 while = { "while" ~ "(" ~ expr ~ ")" ~ block }
 assign = { name ~ "=" ~ expr ~ ";" }
+expr_statement = _{ expr ~ ";" }
 
-statement = _{ if | while | assign }
+statement = _{ if | while | assign | expr_statement }
 
 block = { "{" ~ statement* ~ "}" }
 

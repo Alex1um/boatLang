@@ -1,6 +1,3 @@
-
-use std::collections::HashMap;
-
 use crate::boat_instructions::BoatIns;
 use crate::expr_translator::translate_expr;
 use crate::boat_program::{Statement, Functions, Block, Program};
@@ -40,6 +37,9 @@ fn translate_statement(s: Statement, current_ins_i: u32, functions: &Functions) 
             statement.append(&mut block);
             statement.push(BoatIns::Goto { ins: current_ins_i });
             statement
+        }
+        Statement::Expr(expr) => {
+            translate_expr(expr, functions)
         }
         _ => unimplemented!("Unsupported statement: {:?}", s),
     }
