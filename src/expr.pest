@@ -26,4 +26,4 @@ expr = { atom ~ (bin_op ~ atom)* }
 
 
 // name = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
-function = { name ~ "(" ~ expr ~ ("," ~ expr)* ~ ")" }
+function = { name ~ "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
