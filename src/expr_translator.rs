@@ -32,6 +32,11 @@ pub fn translate_expr(arg: BoatExpr, instructions: &mut Vec<BoatIns>, functions:
                 Function::Predefined { translator } => {
                     instructions.extend(translator(translated_args));
                 }
+                Function::InProgram { begin_pos } => {
+                    for arg in translated_args {
+                        
+                    }
+                }
                 _ => {
                     unimplemented!("Function is not supported");
                 }

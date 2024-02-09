@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use pest::{iterators::Pairs, Parser};
-use crate::{boat_instructions::{BoatArg, BoatCmd, BoatIns}, boat_program::{Block, Function, Program, Statement}, expr_parser::parse_pairs};
+use crate::{boat_instructions::{BoatArg, BoatCmd, BoatIns}, boat_program::{Block, Function, Program, Statement, Functions}, expr_parser::parse_pairs};
 
 
 
@@ -19,8 +19,6 @@ pub struct PinDefinition {
 
 #[derive(pest_derive::Parser)]
 #[grammar = "program.pest"]
-#[grammar = "expr.pest"]
-#[grammar = "base.pest"]
 pub struct ProgramParser;
 
 pub fn parse_definitions(pairs: Pairs<Rule>) -> Vec<PinDefinition> {
@@ -66,6 +64,17 @@ pub fn parse_block(pairs: Pairs<Rule>) -> Block {
             },
             Rule::expr => {
                 Statement::Expr(parse_pairs(pair.into_inner()))
+            }
+            Rule::function_definition => {
+                let mut inner = pair.into_inner();
+                let name = inner.next().unwrap().as_str().to_owned();
+                let mut arg = inner.next().unwrap();
+                let mut args = Vec::<String>::new();
+                while arg.as_rule() == Rule::name {
+                    args.push(arg.as_str().to_owned());
+                    arg = inner.next().unwrap();
+                }
+                Statement::FunctionDefinition { name: name, arg_names: args,  block: parse_block(arg.into_inner()) }
             }
             _ => unreachable!()
         }
