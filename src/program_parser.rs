@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use pest::{iterators::Pairs, Parser};
-use crate::{boat_instructions::BoatIns, expr_parser::parse_pairs, boat_program::{Program, Block, Statement, Function}};
+use crate::{boat_instructions::{BoatArg, BoatCmd, BoatIns}, boat_program::{Block, Function, Program, Statement}, expr_parser::parse_pairs};
 
 
 
@@ -80,12 +80,15 @@ pub fn parse_program(s: &str) -> Program {
     let main_block_pairs = program.next().unwrap().into_inner();
     let pin_definitions = parse_definitions(definitions_pairs);
     for pin_def in pin_definitions {
-        functions.insert(pin_def.name, Function::Predefined { instructions: vec![
-            match pin_def.pin {
-                PinType::In(in_num) => BoatIns::Input { pin: in_num },
-                PinType::Out(out_num) => BoatIns::Output { pin: out_num }
-            }
-        ] });
+        let pin_num = pin_def.pin;
+        functions.insert(pin_def.name, Function::Predefined { translator: Box::new(move |mut args: Vec<BoatArg>| {
+            let (tpe, num) = match pin_num {
+                PinType::In(i) => (BoatCmd::Input, i),
+                PinType::Out(i) => (BoatCmd::Output, i),
+            };
+            args.insert(0, BoatArg::Const(num.to_string()));
+            vec![ BoatIns { cmd: tpe, args: args } ]
+        }) });
     }
     let block = parse_block(main_block_pairs);
     Program { functions: functions, block: block }
