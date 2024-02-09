@@ -8,7 +8,7 @@ fn translate_statement(s: Statement, mut instruction_index: u32, functions: &Fun
         Statement::Assign { var_name, expr } => {
             let mut instructions = Vec::<BoatIns>::new();
             let arg = translate_expr(expr, &mut instructions, functions);
-            instructions.push(BoatIns { cmd: BoatCmd::Push, args: vec![arg] });
+            instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(var_name), arg] });
             instructions
         }
         Statement::If { expr, block, else_block } => {
