@@ -1,4 +1,4 @@
-use crate::boat_instructions::BoatIns;
+use crate::boat_instructions::{BoatArg, BoatIns};
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -37,7 +37,6 @@ pub enum Statement {
 
 pub type Block = Vec<Statement>;
 
-#[derive(Debug)]
 pub enum Function {
     KeyFunction {
         key: String,
@@ -48,13 +47,12 @@ pub enum Function {
         arg_names: Vec<String>
     },
     Predefined {
-        instructions: Vec<BoatIns>
+        translator: Box<dyn Fn(Vec<BoatArg>) -> Vec<BoatIns>>
     }
 }
 
 pub type Functions = HashMap<String, Function>;
 
-#[derive(Debug)]
 pub struct Program {
     pub functions: Functions,
     pub block: Block,
