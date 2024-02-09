@@ -90,7 +90,9 @@ pub fn translated_to_string(inses: Vec<BoatIns>) -> String {
 }
 
 pub fn translated_debug(inses: &Vec<BoatIns>) {
+    let len = inses.len().to_string().len();
     for (i, ins) in inses.iter().enumerate() {
-        println!("{}| {}", i + 1, ins);
+        let line = i + 1;
+        println!("{line:>len$}| {ins}");
     }
 }
