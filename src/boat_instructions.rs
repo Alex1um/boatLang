@@ -19,7 +19,7 @@ pub enum BoatCmd {
     Gt, // Pop two values from top of stack and push 1 if the first is greater than the second or 0
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BoatArg {
     FromStack,
     Const(String),

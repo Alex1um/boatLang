@@ -21,13 +21,13 @@ pub fn translate_expr(arg: BoatExpr, instructions: &mut Vec<BoatIns>, functions:
         BoatExpr::Value(value) => BoatArg::Const(value),
         BoatExpr::Var(name) => BoatArg::FromKVS(name),
         BoatExpr::Function { name, mut args } => {
-            let mut instructions = Vec::<BoatIns>::new();
             let function = functions.get(&name).expect("Function is defined");
             let mut translated_args = Vec::<BoatArg>::new();
             args.reverse();
             for arg in args {
-                translated_args.push(translate_expr(arg, &mut instructions, functions))
+                translated_args.push(translate_expr(arg, instructions, functions))
             }
+            translated_args.reverse();
             match function {
                 Function::Predefined { translator } => {
                     instructions.extend(translator(translated_args));
@@ -39,10 +39,16 @@ pub fn translate_expr(arg: BoatExpr, instructions: &mut Vec<BoatIns>, functions:
             BoatArg::FromStack
         },
         BoatExpr::BinOp { lhs, op, rhs } => {
-            let mut instructions = Vec::<BoatIns>::new();
             let mut bin_op_ins = BoatIns { cmd: op.into(), args: vec![] };
-            bin_op_ins.args.push(translate_expr(*rhs, &mut instructions, functions));
-            bin_op_ins.args.push(translate_expr(*lhs, &mut instructions, functions));
+            let rhs_arg = translate_expr(*rhs, instructions, functions);
+            let lhs_arg = translate_expr(*lhs, instructions, functions);
+            if rhs_arg == BoatArg::FromStack && lhs_arg == BoatArg::FromStack {
+                bin_op_ins.args.push(rhs_arg);
+                bin_op_ins.args.push(lhs_arg);
+            } else {
+                bin_op_ins.args.push(lhs_arg);
+                bin_op_ins.args.push(rhs_arg);
+            }
             instructions.push(bin_op_ins);
             BoatArg::FromStack
         },
