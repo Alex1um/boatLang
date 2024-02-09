@@ -1,9 +1,9 @@
 use crate::boat_instructions::{BoatIns, BoatArg, BoatCmd};
 use crate::expr_translator::translate_expr;
-use crate::boat_program::{Statement, Functions, Block, Program};
+use crate::boat_program::{Statement, Functions, Block, Program, Function};
 
 // current_ins_i = index of last instruction + 1
-fn translate_statement(s: Statement, mut instruction_index: u32, functions: &Functions) -> Vec<BoatIns> {
+fn translate_statement(s: Statement, mut instruction_index: u32, functions: &mut Functions) -> Vec<BoatIns> {
     match s {
         Statement::Assign { var_name, expr } => {
             let mut instructions = Vec::<BoatIns>::new();
@@ -51,11 +51,23 @@ fn translate_statement(s: Statement, mut instruction_index: u32, functions: &Fun
             let mut arg = translate_expr(expr, &mut instructions, functions);
             instructions
         }
+        Statement::FunctionDefinition { name, arg_names, block } => {
+            let mut instructions = Vec::<BoatIns>::new();
+            
+            functions.insert(name, Function::InProgram { begin_pos: instruction_index });
+
+            instruction_index += arg_names.len() as u32;
+            for arg_name in arg_names {
+                instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(arg_name), BoatArg::FromStack] });
+            }
+            instructions.extend(translate_block(block, instruction_index, functions));
+            instructions
+        }
         _ => unimplemented!("Unsupported statement: {:?}", s),
     }
 }
 
-pub fn translate_block(block: Block, mut instruction_index: u32, functions: &Functions) -> Vec<BoatIns> {
+pub fn translate_block(block: Block, mut instruction_index: u32, functions: &mut Functions) -> Vec<BoatIns> {
     block.into_iter().map(|statement| {
         let translated = translate_statement(statement, instruction_index, functions);
         instruction_index += translated.len() as u32;
@@ -64,6 +76,6 @@ pub fn translate_block(block: Block, mut instruction_index: u32, functions: &Fun
 }
 
 pub fn translate_program(program: Program) -> Vec<BoatIns> {
-    let Program { functions, block } = program;
-    translate_block(block, 1, &functions)
+    let Program { mut functions, block } = program;
+    translate_block(block, 1, &mut functions)
 }

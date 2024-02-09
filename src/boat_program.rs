@@ -32,6 +32,7 @@ pub enum Statement {
     If { expr: BoatExpr, block: Block, else_block: Option<Block> },
     While { expr: BoatExpr, block: Block },
     Assign { var_name: String, expr: BoatExpr },
+    FunctionDefinition { name: String, arg_names: Vec<String>, block: Block },
     Expr(BoatExpr),
 }
 
@@ -40,11 +41,9 @@ pub type Block = Vec<Statement>;
 pub enum Function {
     KeyFunction {
         key: String,
-        arg_names: Vec<String>
     },
     InProgram {
         begin_pos: u32,
-        arg_names: Vec<String>
     },
     Predefined {
         translator: Box<dyn Fn(Vec<BoatArg>) -> Vec<BoatIns>>
