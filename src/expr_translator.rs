@@ -32,9 +32,9 @@ pub fn translate_expr(arg: BoatExpr, instructions: &mut Vec<BoatIns>, functions:
                 Function::Predefined { translator } => {
                     instructions.extend(translator(translated_args));
                 }
-                Function::InProgram { begin_pos } => {
-                    for arg in translated_args {
-                        
+                Function::InProgram { begin_pos, arg_names } => {
+                    for (arg, name) in translated_args.into_iter().zip(arg_names) {
+                        instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(name.to_string()), arg] })
                     }
                 }
                 _ => {
