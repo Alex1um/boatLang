@@ -54,12 +54,11 @@ fn translate_statement(s: Statement, mut instruction_index: u32, functions: &mut
         Statement::FunctionDefinition { name, arg_names, block } => {
             let mut instructions = Vec::<BoatIns>::new();
             
-            functions.insert(name, Function::InProgram { begin_pos: instruction_index });
+            let arg_len = arg_names.len() as u32;
 
-            instruction_index += arg_names.len() as u32;
-            for arg_name in arg_names {
-                instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(arg_name), BoatArg::FromStack] });
-            }
+            functions.insert(name, Function::InProgram { begin_pos: instruction_index, arg_names: arg_names });
+
+            instruction_index += arg_len;
             instructions.extend(translate_block(block, instruction_index, functions));
             instructions
         }
