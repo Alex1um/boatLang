@@ -5,6 +5,7 @@ mod program_parser;
 mod boat_instructions;
 mod boat_program;
 mod program_translator;
+mod interpreter;
 use std::env;
 use std::fs;
 
@@ -18,6 +19,7 @@ fn main() {
     let program = program_parser::parse_program(&contents);
     let translated = crate::program_translator::translate_program(program);
     crate::boat_instructions::translated_debug(&translated);
+    crate::interpreter::interpret(&translated);
     let text = crate::boat_instructions::translated_to_string(translated);
     println!("{}", text);
 }

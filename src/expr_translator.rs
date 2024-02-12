@@ -30,8 +30,8 @@ pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: 
             translated_args.reverse();
             match function {
                 Function::Predefined { translator } => {
-                    *instruction_index += translated_args.len() as u32;
                     let translated_instrutions = translator(translated_args);
+                    *instruction_index += translated_instrutions.len() as u32;
                     instructions.extend(translated_instrutions);
                 }
                 Function::InProgram { begin_pos, arg_names } => {
