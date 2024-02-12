@@ -1,0 +1,13 @@
+print = out(1);
+{
+    function square(x) {
+        x * x;
+    }
+    function add(a, b) {
+        square(a) + square(b);
+    }
+    function add2(a, b) {
+        a * a + b * b;
+    }
+    print(add(1, 2) == add2(1, 2));
+}

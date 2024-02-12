@@ -49,7 +49,7 @@ expr_statement = _{ expr ~ ";" }
 function_definition = { "function" ~ name ~ "(" ~ (name ~ ("," ~ name)*)? ~ ")" ~ block }
 
 
-statement = _{ if | while | assign | expr_statement }
+statement = _{ function_definition | if | while | assign | expr_statement }
 
 block = { "{" ~ statement* ~ "}" }
 
