@@ -36,15 +36,15 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
         }
         Statement::While { expr, block } => {
             let mut statement = Vec::<BoatIns>::new();
-            let while_arg = translate_expr(expr, instruction_index, &mut statement, functions);
             let while_begin_index = *instruction_index;
-            *instruction_index += statement.len() as u32 + 2;
-            let block = translate_block(block, instruction_index, functions);
-            *instruction_index += block.len() as u32 + 1;
+            let while_arg = translate_expr(expr, instruction_index, &mut statement, functions);
             statement.push(BoatIns { cmd: BoatCmd::Eq, args: vec![while_arg, BoatArg::Const("0".to_owned())]});
-            statement.push(BoatIns { cmd: BoatCmd::Cmp, args: vec![BoatArg::FromStack, BoatArg::Const(instruction_index.to_string())] });
+            *instruction_index += 2;
+            let block = translate_block(block, instruction_index, functions);
+            statement.push(BoatIns { cmd: BoatCmd::Cmp, args: vec![BoatArg::FromStack, BoatArg::Const((*instruction_index + 1u32).to_string())] });
             statement.extend(block);
             statement.push(BoatIns { cmd: BoatCmd::Goto, args: vec![ BoatArg::Const(while_begin_index.to_string()) ] });
+            *instruction_index += 1;
             statement
         }
         Statement::Expr(expr) => {

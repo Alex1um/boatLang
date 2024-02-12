@@ -18,7 +18,7 @@ pub fn interpret(program: &Vec<BoatIns>) {
     let mut i = 0;
     let l = program.len();
     while i < l {
-        println!("{i}");
+        // println!("{}", i + 1);
         let ins = &program[i];
         let BoatIns {args, cmd} = ins;
         match cmd {
@@ -36,38 +36,38 @@ pub fn interpret(program: &Vec<BoatIns>) {
             BoatCmd::Input => {
                 let mut s = String::new();
                 stdin().read_line(&mut s).unwrap();
-                stack.push(s);
+                stack.push(s.trim().to_string());
             },
             BoatCmd::Output => {
-                let out = get_arg(args.get(0).expect("Output has 2 args"), &mut stack, &kvs);
+                let out = get_arg(args.get(1).expect("Output has 2 args"), &mut stack, &kvs);
                 println!("{out}");
             },
             BoatCmd::Add => {
                 let arg1 = get_arg(args.get(0).expect("operation has 1 arg"), &mut stack, &kvs);
                 let arg2 = get_arg(args.get(1).expect("operation has 2 args"), &mut stack, &kvs);
-                let parsed1 = arg1.parse::<f32>().expect("argument 1 is f32");
-                let parsed2 = arg2.parse::<f32>().expect("argument 2 is f32");
+                let parsed1 = arg1.trim().parse::<f32>().expect("argument 1 is f32");
+                let parsed2 = arg2.trim().parse::<f32>().expect("argument 2 is f32");
                 stack.push((parsed1 + parsed2).to_string());
             },
             BoatCmd::Sub => {
                 let arg1 = get_arg(args.get(0).expect("operation has 1 arg"), &mut stack, &kvs);
                 let arg2 = get_arg(args.get(1).expect("operation has 2 args"), &mut stack, &kvs);
-                let parsed1 = arg1.parse::<f32>().expect("argument 1 is f32");
-                let parsed2 = arg2.parse::<f32>().expect("argument 2 is f32");
+                let parsed1 = arg1.trim().parse::<f32>().expect("argument 1 is f32");
+                let parsed2 = arg2.trim().parse::<f32>().expect("argument 2 is f32");
                 stack.push((parsed1 - parsed2).to_string());
             },
             BoatCmd::Mul => {
                 let arg1 = get_arg(args.get(0).expect("operation has 1 arg"), &mut stack, &kvs);
                 let arg2 = get_arg(args.get(1).expect("operation has 2 args"), &mut stack, &kvs);
-                let parsed1 = arg1.parse::<f32>().expect("argument 1 is f32");
-                let parsed2 = arg2.parse::<f32>().expect("argument 2 is f32");
+                let parsed1 = arg1.trim().parse::<f32>().expect("argument 1 is f32");
+                let parsed2 = arg2.trim().parse::<f32>().expect("argument 2 is f32");
                 stack.push((parsed1 * parsed2).to_string());
             },
             BoatCmd::Div => {
                 let arg1 = get_arg(args.get(0).expect("operation has 1 arg"), &mut stack, &kvs);
                 let arg2 = get_arg(args.get(1).expect("operation has 2 args"), &mut stack, &kvs);
-                let parsed1 = arg1.parse::<f32>().expect("argument 1 is f32");
-                let parsed2 = arg2.parse::<f32>().expect("argument 2 is f32");
+                let parsed1 = arg1.trim().parse::<f32>().expect("argument 1 is f32");
+                let parsed2 = arg2.trim().parse::<f32>().expect("argument 2 is f32");
                 stack.push((parsed1 / parsed2).to_string());
             },
             BoatCmd::Conc => {

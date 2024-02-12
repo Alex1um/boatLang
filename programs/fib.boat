@@ -1,4 +1,5 @@
 print = out(1);
+input = in(1);
 {
     function fib(a) {
         if (a == 1) {
@@ -11,5 +12,5 @@ print = out(1);
             }
         } 
     }
-    print(fib(12));
+    print(fib(input()));
 }
