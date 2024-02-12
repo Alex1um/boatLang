@@ -96,6 +96,9 @@ pub fn parse_program(s: &str) -> Program {
                 PinType::Out(i) => (BoatCmd::Output, i),
             };
             args.insert(0, BoatArg::Const(num.to_string()));
+            if tpe == BoatCmd::Input {
+                args.insert(1, BoatArg::Const("60".to_owned()));
+            }
             vec![ BoatIns { cmd: tpe, args: args } ]
         }) });
     }
