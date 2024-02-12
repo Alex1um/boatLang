@@ -39,13 +39,14 @@ pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: 
                         *instruction_index += 1;
                         instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(name.to_string()), arg] });
                     }
-                    *instruction_index += 3;
+                    *instruction_index += 2;
                     instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const("return".to_owned()), BoatArg::Const(instruction_index.to_string())] });
                     instructions.push(BoatIns { cmd: BoatCmd::Goto, args: vec![BoatArg::Const(begin_pos.to_string())] });
                     instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const("return".to_owned())] });
+                    *instruction_index += 1;
                     for name in arg_names {
                         *instruction_index += 1;
-                        instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(name.to_string())] });
+                        instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const(name.to_string())] });
                     }
                 }
                 _ => {
