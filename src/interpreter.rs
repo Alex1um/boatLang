@@ -87,7 +87,7 @@ pub fn interpret(program: &Vec<BoatIns>) {
             BoatCmd::Cmp => {
                 let arg1 = get_arg(args.get(0).expect("cmp has 1 arg"), &mut stack, &kvs);
                 let arg2 = get_arg(args.get(1).expect("cmp has 1 arg"), &mut stack, &kvs);
-                if arg1.parse::<f32>().expect("arg1 is numeric") == 1. {
+                if arg1.parse::<f32>().expect("arg1 is numeric") == 0. {
                     i = arg2.parse::<usize>().expect("arg2 is u32") - 1;
                     continue;
                 }
