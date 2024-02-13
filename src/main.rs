@@ -6,13 +6,15 @@ mod boat_instructions;
 mod boat_program;
 mod program_translator;
 mod interpreter;
-use std::env;
-use std::fs;
-use std::path::PathBuf;
-use std::str::FromStr;
+
+
+
+
 
 #[cfg(not(debug_assertions))]
 fn main() {
+    use std::fs;
+    use std::path::PathBuf;
 
     let flags = xflags::parse_or_exit! {
         /// Interpret compiled code
@@ -55,7 +57,7 @@ fn main() {
     ";
 
     // Open the file, read it, and parse it
-    let program = program_parser::parse_program(&contents);
+    let program = program_parser::parse_program(contents);
     let translated = crate::program_translator::translate_program(program);
     crate::boat_instructions::translated_debug(&translated);
     crate::interpreter::interpret(&translated);

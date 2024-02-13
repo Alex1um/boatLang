@@ -39,10 +39,6 @@ pub enum Statement {
 pub type Block = Vec<Statement>;
 
 pub enum Function {
-    KeyFunction {
-        key: String,
-        arg_names: Vec<String>,
-    },
     InProgram {
         begin_pos: u32,
         arg_names: Vec<String>,
