@@ -15,15 +15,14 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
         Statement::If { expr, block, else_block } => {
             let mut statement = Vec::<BoatIns>::new();
             let if_arg = translate_expr(expr, instruction_index, &mut statement, functions);
-            statement.push(BoatIns {cmd: BoatCmd::Eq, args: vec![if_arg, BoatArg::Const("0".to_owned())]});
-            *instruction_index += 2; // cmd and eq
+            *instruction_index += 1; // cmd and eq
             let block = translate_block(block, instruction_index, functions);
             // *instruction_index += block.len() as u32;
             
             if !else_block.is_none() {
                 *instruction_index += 1;
             }
-            statement.push(BoatIns {cmd: BoatCmd::Cmp, args: vec![BoatArg::FromStack, BoatArg::Const(instruction_index.to_string())]});
+            statement.push(BoatIns {cmd: BoatCmd::Cmp, args: vec![if_arg, BoatArg::Const(instruction_index.to_string())]});
             statement.extend(block);
 
             if let Some(else_block) = else_block {
@@ -38,10 +37,9 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
             let mut statement = Vec::<BoatIns>::new();
             let while_begin_index = *instruction_index;
             let while_arg = translate_expr(expr, instruction_index, &mut statement, functions);
-            statement.push(BoatIns { cmd: BoatCmd::Eq, args: vec![while_arg, BoatArg::Const("0".to_owned())]});
-            *instruction_index += 2;
+            *instruction_index += 1;
             let block = translate_block(block, instruction_index, functions);
-            statement.push(BoatIns { cmd: BoatCmd::Cmp, args: vec![BoatArg::FromStack, BoatArg::Const((*instruction_index + 1u32).to_string())] });
+            statement.push(BoatIns { cmd: BoatCmd::Cmp, args: vec![while_arg, BoatArg::Const((*instruction_index + 1u32).to_string())] });
             statement.extend(block);
             statement.push(BoatIns { cmd: BoatCmd::Goto, args: vec![ BoatArg::Const(while_begin_index.to_string()) ] });
             *instruction_index += 1;
