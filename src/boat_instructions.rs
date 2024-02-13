@@ -87,6 +87,17 @@ pub fn translated_to_string(inses: Vec<BoatIns>) -> String {
         .join("")
 }
 
+pub fn translated_to_string2(inses: Vec<BoatIns>) -> String {
+    let mut s = inses
+        .into_iter()
+        .enumerate()
+        .map(|(i, ins)| format!("{}|{ins}", i + 1))
+        .collect::<Vec<String>>()
+        .join("");
+    s.insert(0, ';');
+    s
+}
+
 pub fn translated_debug(inses: &Vec<BoatIns>) {
     let len = inses.len().to_string().len();
     for (i, ins) in inses.iter().enumerate() {
