@@ -21,6 +21,8 @@ fn main() {
         optional -i,--interpret
         /// Print prettified compiled code
         optional -p,--preety
+        /// Use programs v2
+        optional -v2,--version2
         /// File or directory to parse
         required path: PathBuf
     };
@@ -33,7 +35,11 @@ fn main() {
     if flags.interpret {
         crate::interpreter::interpret(&translated);
     }
-    let text = crate::boat_instructions::translated_to_string(translated);
+    let text = if flags.version2 {
+        crate::boat_instructions::translated_to_string2(translated)
+    } else {
+        crate::boat_instructions::translated_to_string(translated)
+    };
     println!("{}", text);
 }
 
