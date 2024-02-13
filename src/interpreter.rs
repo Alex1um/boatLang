@@ -8,7 +8,7 @@ fn get_arg(arg: &BoatArg, stack: &mut Vec<String>, kvs: &Kvs) -> String {
     match arg {
         BoatArg::Const(c) => { c.to_string() },
         BoatArg::FromStack => { stack.pop().expect("stack has values") }
-        BoatArg::FromKVS(k) => { kvs.get(k).unwrap_or_else(|| panic!("stack has key {k}")).last().expect("kvs has value").to_string() }
+        BoatArg::FromKVS(k) => { kvs.get(k).unwrap_or_else(|| panic!("kvs has key {k}")).last().expect("kvs has value").to_string() }
     }
 }
 
