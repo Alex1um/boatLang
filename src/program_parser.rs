@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use pest::{iterators::Pairs, Parser};
-use crate::{boat_instructions::{BoatArg, BoatCmd, BoatIns}, boat_program::{Block, Function, Program, Statement, Functions}, expr_parser::parse_pairs};
+use crate::{boat_instructions::{BoatArg, BoatCmd, BoatIns}, boat_program::{Block, Function, Program, Statement}, expr_parser::parse_pairs};
 
 
 
@@ -74,7 +74,7 @@ pub fn parse_block(pairs: Pairs<Rule>) -> Block {
                     args.push(arg.as_str().to_owned());
                     arg = inner.next().unwrap();
                 }
-                Statement::FunctionDefinition { name: name, arg_names: args,  block: parse_block(arg.into_inner()) }
+                Statement::FunctionDefinition { name, arg_names: args,  block: parse_block(arg.into_inner()) }
             }
             _ => unreachable!()
         }
@@ -99,9 +99,9 @@ pub fn parse_program(s: &str) -> Program {
             if tpe == BoatCmd::Input {
                 args.insert(1, BoatArg::Const("60".to_owned()));
             }
-            vec![ BoatIns { cmd: tpe, args: args } ]
+            vec![ BoatIns { cmd: tpe, args } ]
         }) });
     }
     let block = parse_block(main_block_pairs);
-    Program { functions: functions, block: block }
+    Program { functions, block }
 }

@@ -3,7 +3,6 @@ use std::fmt::Display;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BoatCmd {
     Push, // Push value on top of stack
-    Pop,
     Goto, // Go to instruction with index
     Input, // Block until input value from pin and push it on top of stack
     Output, // Pop value from top of stack and output it to pin
@@ -37,7 +36,6 @@ impl Display for BoatCmd {
         use BoatCmd::*;
         match self {
             Push => write!(f, "p"),
-            Pop => write!(f, "x"),
             Goto  => write!(f, "g"),
             Input => write!(f, "i"),
             Output => write!(f, "o"),

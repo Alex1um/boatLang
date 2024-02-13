@@ -1,20 +1,20 @@
-use std::{collections::{btree_map::OccupiedEntry, hash_map::VacantEntry, HashMap}, fmt::format, io::stdin};
+use std::{collections::HashMap, io::stdin};
 
 use crate::boat_instructions::{BoatCmd, BoatIns, BoatArg};
 
-type KVS = HashMap<String, Vec<String>>;
+type Kvs = HashMap<String, Vec<String>>;
 
-fn get_arg(arg: &BoatArg, stack: &mut Vec<String>, kvs: &KVS) -> String {
+fn get_arg(arg: &BoatArg, stack: &mut Vec<String>, kvs: &Kvs) -> String {
     match arg {
         BoatArg::Const(c) => { c.to_string() },
         BoatArg::FromStack => { stack.pop().expect("stack has values") }
-        BoatArg::FromKVS(k) => { kvs.get(k).expect(&format!("stack has key {k}")).last().expect("kvs has value").to_string() }
+        BoatArg::FromKVS(k) => { kvs.get(k).unwrap_or_else(|| panic!("stack has key {k}")).last().expect("kvs has value").to_string() }
     }
 }
 
 pub fn interpret(program: &Vec<BoatIns>) {
     let mut stack = Vec::<String>::new();
-    let mut kvs = KVS::new();
+    let mut kvs = Kvs::new();
     let mut i = 0;
     let l = program.len();
     while i < l {
@@ -25,9 +25,6 @@ pub fn interpret(program: &Vec<BoatIns>) {
             BoatCmd::Push => {
                 let arg = get_arg(args.first().expect("Push has 1 arg"), &mut stack, &kvs);
                 stack.push(arg);
-            },
-            BoatCmd::Pop => {
-                stack.pop();
             },
             BoatCmd::Goto => {
                 i = get_arg(args.first().expect("Goto has 1 arg"), &mut stack, &kvs).parse::<usize>().expect("Goto arg is integer") - 1usize;

@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "boatLang"
+name = "boat_lang"
 version = "0.1.0"
 dependencies = [
  "lazy_static",

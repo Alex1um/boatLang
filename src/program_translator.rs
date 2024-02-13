@@ -19,7 +19,7 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
             let block = translate_block(block, instruction_index, functions);
             // *instruction_index += block.len() as u32;
             
-            if !else_block.is_none() {
+            if else_block.is_some() {
                 *instruction_index += 1;
             }
             statement.push(BoatIns {cmd: BoatCmd::Cmp, args: vec![if_arg, BoatArg::Const(instruction_index.to_string())]});
@@ -59,7 +59,7 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
             let mut instructions = Vec::<BoatIns>::new();
             
             *instruction_index += 1;
-            functions.insert(name, Function::InProgram { begin_pos: *instruction_index, arg_names: arg_names });
+            functions.insert(name, Function::InProgram { begin_pos: *instruction_index, arg_names });
 
             instructions.extend(translate_block(block, instruction_index, functions));
             instructions.push(BoatIns { cmd: BoatCmd::Goto, args: vec![BoatArg::FromKVS("return".to_string())] });
@@ -67,16 +67,15 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
             instructions.insert(0, BoatIns { cmd: BoatCmd::Goto, args: vec![BoatArg::Const(instruction_index.to_string())] });
             instructions
         }
-        _ => unimplemented!("Unsupported statement: {:?}", s),
     }
 }
 
 pub fn translate_block(block: Block, instruction_index: &mut u32, functions: &mut Functions) -> Vec<BoatIns> {
-    block.into_iter().map(|statement| {
-        let translated = translate_statement(statement, instruction_index, functions);
+    block.into_iter().flat_map(|statement| {
+        
         // instruction_index += translated.len() as u32;
-        translated
-    }).flatten().collect()
+        translate_statement(statement, instruction_index, functions)
+    }).collect()
 }
 
 pub fn translate_program(program: Program) -> Vec<BoatIns> {

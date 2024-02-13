@@ -1,10 +1,10 @@
 use crate::boat_program::{BoatExpr, BoatOp, Function, Functions};
 use crate::boat_instructions::{BoatIns, BoatArg, BoatCmd};
 
-impl Into<BoatCmd> for BoatOp {
-    fn into(self) -> BoatCmd {
+impl From<BoatOp> for BoatCmd {
+    fn from(val: BoatOp) -> Self {
         use BoatOp::*;
-        match self {
+        match val {
             Add => BoatCmd::Add,
             Sub => BoatCmd::Sub,
             Mul => BoatCmd::Mul,
@@ -48,9 +48,6 @@ pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: 
                         *instruction_index += 1;
                         instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const(name.to_string())] });
                     }
-                }
-                _ => {
-                    unimplemented!("Function is not supported");
                 }
             }
             BoatArg::FromStack
