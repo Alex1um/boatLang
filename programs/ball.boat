@@ -1,28 +1,46 @@
 display = out(4);
-dclear = out(5);
 {
-    ball_x = 0;
+    function draw(bx, by) {
+        x = 0;
+        y = 0;
+        str = "";
+        while (y < 7) {
+            if (by == y) {
+                while (x < 7) {
+                    if (bx == x) {
+                        str = str .. "9";
+                    } else {
+                        str = str .. "0";
+                    }
+                    x = x + 1;
+                }
+            } else {
+                str = str .. "0000000";
+            }
+            y = y + 1;
+        }
+        display(str);
+    }
+    ball_x = 1;
     ball_y = 0;
     vx = 1;
     vy = 1;
-    todisp = 0;
     while (1) {
-        if (ball_x > 4) {
-            vx = -1;
+        if (ball_x > 5) {
+            vx = 0-1;
         }
         if (ball_x < 1) {
             vx = 1;
         }
-        if (ball_y > 6) {
-            vy = -1;
+        if (ball_y > 5) {
+            vy = 0-1;
         }
         if (ball_y < 1) {
             vy = 1;
         }
         ball_x = ball_x + vx;
         ball_y = ball_y + vy;
-        todisp = ball_x .. "g" .. ball_y .. "g9";
-        dclear(1);
-        display(todisp);
+        draw(ball_x, ball_y);
+        sleep(.5);
     }
 }

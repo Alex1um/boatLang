@@ -1,6 +1,6 @@
 // base
 
-name = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
+name = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 WHITESPACE = _{ " " | "\n" | "\t" }
 
@@ -15,7 +15,7 @@ definition = { name ~ "=" ~ (in_f | out_f) ~ ";" }
 definition_section = { definition* }
 
 // expr
-integer = @{ ASCII_DIGIT+ }
+integer = @{ ASCII_DIGIT+ | (ASCII_DIGIT* ~ "." ~ ASCII_DIGIT+) | (ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT*) }
 
 string = ${ "\"" ~ inner ~ "\"" }
 inner = @{ char* }
@@ -27,14 +27,17 @@ char = {
 
 atom = _{ integer | string | function | name | "(" ~ expr ~ ")" }
 
-bin_op = _{ add | subtract | multiply | divide | concat | gt | eq }
+bin_op = _{ add | subtract | multiply | divide | concat | gt | lt | eq | land | lor }
     add = { "+" }
     subtract = { "-" }
     multiply = { "*" }
     divide = { "/" }
     concat = { ".." }
     gt = { ">" }
+    lt = { "<" }
     eq = { "==" }
+    land = { "&&" }
+    lor = { "||" }
 
 expr = { atom ~ (bin_op ~ atom)* }
 // equation = _{ SOI ~ expr ~ EOI }

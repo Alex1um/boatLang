@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::stdin};
+use std::{collections::HashMap, io::stdin, thread::sleep, time::Duration};
 
 use crate::boat_instructions::{BoatCmd, BoatIns, BoatArg};
 
@@ -12,14 +12,18 @@ fn get_arg(arg: &BoatArg, stack: &mut Vec<String>, kvs: &Kvs) -> String {
     }
 }
 
-pub fn interpret(program: &Vec<BoatIns>) {
+pub fn interpret(program: &Vec<BoatIns>, debug: bool) {
     let mut stack = Vec::<String>::new();
     let mut kvs = Kvs::new();
     let mut i = 0;
     let l = program.len();
     while i < l {
-        // println!("{}", i + 1);
         let ins = &program[i];
+        if debug {
+            println!("{}| {ins} -- {:?} -- {:?}", i + 1, stack, kvs);
+            let mut s = String::new();
+            stdin().read_line(&mut s);
+        }
         let BoatIns {args, cmd} = ins;
         match cmd {
             BoatCmd::Push => {
@@ -36,8 +40,21 @@ pub fn interpret(program: &Vec<BoatIns>) {
                 stack.push(s.trim().to_string());
             },
             BoatCmd::Output => {
+                let out_num = get_arg(args.get(0).expect("Output has 1 arg"), &mut stack, &kvs);
                 let out = get_arg(args.get(1).expect("Output has 2 args"), &mut stack, &kvs);
-                println!("{out}");
+                match out_num.as_str() {
+                    "4" => {
+                        // 7x7 display
+                        out.chars()
+                            .collect::<Vec<char>>()
+                            .chunks(7)
+                            .for_each(|c| println!("{}", c.iter().collect::<String>()));
+                        println!("");
+                    }
+                    _ => {
+                        println!("{out}");
+                    }
+                }
             },
             BoatCmd::Add => {
                 let arg1 = get_arg(args.get(0).expect("operation has 1 arg"), &mut stack, &kvs);
@@ -101,6 +118,22 @@ pub fn interpret(program: &Vec<BoatIns>) {
                 let parsed2 = arg2.parse::<f32>().expect("argument 2 is f32");
                 stack.push(((parsed1 > parsed2) as usize as f32).to_string());
             },
+            BoatCmd::Lt => {
+                let arg1 = get_arg(args.get(0).expect("operation has 1 arg"), &mut stack, &kvs);
+                let arg2 = get_arg(args.get(1).expect("operation has 2 args"), &mut stack, &kvs);
+                let parsed1 = arg1.parse::<f32>().expect("argument 1 is f32");
+                let parsed2 = arg2.parse::<f32>().expect("argument 2 is f32");
+                stack.push(((parsed1 < parsed2) as usize as f32).to_string());
+            },
+            BoatCmd::KVReSet => {
+                let arg1 = get_arg(args.get(0).expect("kvset has 1 arg"), &mut stack, &kvs);
+                let arg2 = get_arg(args.get(1).expect("kvset has 2 args"), &mut stack, &kvs);
+                kvs.entry(arg1).and_modify(|e| { e.pop(); e.push(arg2.clone()) }).or_insert(vec![arg2]);
+            },
+            BoatCmd::Sleep => {
+                let arg1 = get_arg(args.get(0).expect("kvset has 1 arg"), &mut stack, &kvs);
+                sleep(Duration::from_secs_f64(arg1.parse().expect("arg1 is f64")));
+            }
         };
         i += 1;
     }

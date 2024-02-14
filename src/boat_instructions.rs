@@ -11,11 +11,14 @@ pub enum BoatCmd {
     Mul, // Pop two values from top of stack and push their product
     Div, // Pop two values from top of stack and push their quotient
     Conc, // Pop two values from top of stack and push their concatenation
+    KVReSet, // Pop value from top of stack and set key to that value on key-value storage
     KVSet, // Pop value from top of stack and set key to that value on key-value storage
     KVDel, // Delete value by key from key-value storage
     Cmp, // Pop value from top of stack and goto instruction if it is 1
+    Lt, // Pop two values from top of stack and push 1 if they are equal or 0
     Eq, // Pop two values from top of stack and push 1 if they are equal or 0
     Gt, // Pop two values from top of stack and push 1 if the first is greater than the second or 0
+    Sleep,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -46,9 +49,12 @@ impl Display for BoatCmd {
             Conc => write!(f, ".."),
             KVSet => write!(f, "ka"),
             KVDel => write!(f, "kd"),
+            KVReSet => write!(f, "kr"),
             Cmp  => write!(f, "c"),
             Eq => write!(f, "="),
+            Lt => write!(f, "<"),
             Gt => write!(f, ">"),
+            Sleep => write!(f, "s"),
         }
     }
 }
