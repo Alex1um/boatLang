@@ -68,7 +68,7 @@ fn main() {
     let program = program_parser::parse_program(contents);
     let translated = crate::program_translator::translate_program(program);
     crate::boat_instructions::translated_debug(&translated);
-    crate::interpreter::interpret(&translated);
+    crate::interpreter::interpret(&translated, false);
     let text = crate::boat_instructions::translated_to_string(translated);
     println!("{}", text);
 }

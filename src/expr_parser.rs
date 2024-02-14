@@ -16,6 +16,7 @@ lazy_static::lazy_static! {
             .op(Op::infix(concat, Left))
             .op(Op::infix(add, Left) | Op::infix(subtract, Left))
             .op(Op::infix(multiply, Left) | Op::infix(divide, Left))
+            .op(Op::prefix(unary_minus))
     };
 }
 
@@ -53,6 +54,9 @@ pub fn parse_pairs(pairs: Pairs<Rule>) -> BoatExpr {
                 op,
                 rhs: Box::new(rhs),
             }
+        })
+        .map_prefix(|op, exp| {
+            BoatExpr::BinOp { lhs: Box::new(BoatExpr::Value("0".to_owned())), op: BoatOp::Sub, rhs: Box::new(exp) }
         })
         .parse(pairs)
 }
