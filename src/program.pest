@@ -3,6 +3,7 @@
 name = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 WHITESPACE = _{ " " | "\n" | "\t" }
+COMMENT = _{ "//" ~ (!"\n" ~ ANY)*  }
 
 // define section
 
@@ -15,7 +16,7 @@ definition = { name ~ "=" ~ (in_f | out_f) ~ ";" }
 definition_section = { definition* }
 
 // expr
-integer = @{ ASCII_DIGIT+ | (ASCII_DIGIT* ~ "." ~ ASCII_DIGIT+) | (ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT*) }
+integer = @{ "-"? ~ (ASCII_DIGIT+ | (ASCII_DIGIT* ~ "." ~ ASCII_DIGIT+) | (ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT*)) }
 
 string = ${ "\"" ~ inner ~ "\"" }
 inner = @{ char* }
@@ -25,7 +26,8 @@ char = {
     | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
 }
 
-atom = _{ integer | string | function | name | "(" ~ expr ~ ")" }
+unary_minus = { "-" }
+atom = _{ integer | string | (unary_minus? ~ (string | function | name | "(" ~ expr ~ ")")) }
 
 bin_op = _{ add | subtract | multiply | divide | concat | gt | lt | eq | land | lor }
     add = { "+" }
