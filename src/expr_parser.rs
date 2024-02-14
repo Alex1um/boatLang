@@ -11,7 +11,8 @@ lazy_static::lazy_static! {
         // Precedence is defined lowest to highest
         PrattParser::new()
             // Addition and subtract have equal precedence
-            .op(Op::infix(gt, Left) | Op::infix(eq, Left))
+            .op(Op::infix(land, Left) | Op::infix(lor, Left))
+            .op(Op::infix(gt, Left) | Op::infix(lt, Left) | Op::infix(eq, Left))
             .op(Op::infix(concat, Left))
             .op(Op::infix(add, Left) | Op::infix(subtract, Left))
             .op(Op::infix(multiply, Left) | Op::infix(divide, Left))
@@ -41,7 +42,10 @@ pub fn parse_pairs(pairs: Pairs<Rule>) -> BoatExpr {
                 Rule::divide => BoatOp::Div,
                 Rule::concat => BoatOp::Conc,
                 Rule::gt => BoatOp::Gt,
+                Rule::lt => BoatOp::Lt,
                 Rule::eq => BoatOp::Eq,
+                Rule::land => BoatOp::Mul,
+                Rule::lor => BoatOp::Add,
                 _ => unreachable!(),
             };
             BoatExpr::BinOp {

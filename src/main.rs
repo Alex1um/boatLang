@@ -23,6 +23,8 @@ fn main() {
         optional -p,--preety
         /// Use programs v2
         optional -v2,--version2
+        /// Use debug mode in interpreter
+        optional -d,--debug
         /// File or directory to parse
         required path: PathBuf
     };
@@ -33,7 +35,7 @@ fn main() {
         crate::boat_instructions::translated_debug(&translated);
     }
     if flags.interpret {
-        crate::interpreter::interpret(&translated);
+        crate::interpreter::interpret(&translated, flags.debug);
     }
     let text = if flags.version2 {
         crate::boat_instructions::translated_to_string2(translated)

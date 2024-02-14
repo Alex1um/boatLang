@@ -11,6 +11,7 @@ impl From<BoatOp> for BoatCmd {
             Div => BoatCmd::Div,
             Conc => BoatCmd::Conc,
             Gt => BoatCmd::Gt,
+            Lt => BoatCmd::Lt,
             Eq => BoatCmd::Eq,
         }
     }

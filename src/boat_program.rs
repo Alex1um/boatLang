@@ -23,6 +23,7 @@ pub enum BoatOp {
     Mul,
     Div,
     Conc,
+    Lt,
     Gt,
     Eq,
 }
