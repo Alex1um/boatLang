@@ -79,7 +79,7 @@ impl Display for BoatIns {
                 .map(|arg| format!("{arg}"))
                 .collect::<Vec<String>>()
                 .join(" ");
-            write!(f, "{} {args};", self.cmd)?;
+            write!(f, "{} {args}", self.cmd)?;
         }
         Ok(())
     }
@@ -88,7 +88,7 @@ impl Display for BoatIns {
 pub fn translated_to_string(inses: Vec<BoatIns>) -> String {
     inses
         .into_iter()
-        .map(|ins| format!("{ins}"))
+        .map(|ins| format!("{ins};"))
         .collect::<Vec<String>>()
         .join("")
 }
@@ -97,10 +97,9 @@ pub fn translated_to_string2(inses: Vec<BoatIns>) -> String {
     let mut s = inses
         .into_iter()
         .enumerate()
-        .map(|(i, ins)| format!("{}|{ins}", i + 1))
+        .map(|(i, ins)| format!("|{}|{ins}", i + 1))
         .collect::<Vec<String>>()
         .join("");
-    s.insert(0, ';');
     s
 }
 
