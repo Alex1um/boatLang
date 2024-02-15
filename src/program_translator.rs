@@ -8,6 +8,8 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
         Statement::Assign { var_name, expr } => {
             let mut instructions = Vec::<BoatIns>::new();
             let arg = translate_expr(expr, instruction_index, &mut instructions, functions);
+            instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const(var_name.clone())] });
+            *instruction_index += 1;
             instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(var_name), arg] });
             *instruction_index += 1;
             instructions

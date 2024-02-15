@@ -56,6 +56,6 @@ function_definition = { "function" ~ name ~ "(" ~ (name ~ ("," ~ name)*)? ~ ")" 
 
 statement = _{ function_definition | if | while | assign | expr_statement }
 
-block = { "{" ~ statement* ~ "}" }
+block = { "{" ~ statement* ~ "}" | statement }
 
 program = { SOI ~ definition_section ~ block ~ EOI }
