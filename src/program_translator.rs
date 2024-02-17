@@ -5,11 +5,18 @@ use crate::boat_program::{Block, BoatExpr, Function, Functions, Program, Stateme
 // current_ins_i = index of last instruction + 1
 fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mut Functions) -> Vec<BoatIns> {
     match s {
+        Statement::Reassign { var_name, expr } => {
+            let mut instructions = Vec::<BoatIns>::new();
+            let arg = translate_expr(expr, instruction_index, &mut instructions, functions);
+            instructions.push(BoatIns { cmd: BoatCmd::KVReSet, args: vec![BoatArg::Const(var_name), arg] });
+            *instruction_index += 1;
+            instructions
+        }
         Statement::Assign { var_name, expr } => {
             let mut instructions = Vec::<BoatIns>::new();
             let arg = translate_expr(expr, instruction_index, &mut instructions, functions);
-            instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const(var_name.clone())] });
-            *instruction_index += 1;
+            // instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const(var_name.clone())] });
+            // *instruction_index += 1;
             instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const(var_name), arg] });
             *instruction_index += 1;
             instructions

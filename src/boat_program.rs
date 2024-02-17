@@ -1,7 +1,7 @@
 use crate::boat_instructions::{BoatArg, BoatIns};
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BoatExpr {
     Value(String),
     Var(String),
@@ -16,7 +16,7 @@ pub enum BoatExpr {
     },
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BoatOp {
     Add,
     Sub,
@@ -33,6 +33,7 @@ pub enum Statement {
     If { expr: BoatExpr, block: Block, else_block: Option<Block> },
     While { expr: BoatExpr, block: Block },
     Assign { var_name: String, expr: BoatExpr },
+    Reassign { var_name: String, expr: BoatExpr },
     FunctionDefinition { name: String, arg_names: Vec<String>, block: Block },
     Expr(BoatExpr),
 }
