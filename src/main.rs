@@ -1,3 +1,5 @@
+use crate::program_optimizer::optimize_reassigns;
+
 mod expr_parser;
 mod expr_optimizer;
 mod expr_translator;
@@ -6,12 +8,12 @@ mod boat_instructions;
 mod boat_program;
 mod program_translator;
 mod interpreter;
+mod program_optimizer;
 
 
 
 
 
-#[cfg(not(debug_assertions))]
 fn main() {
     use std::fs;
     use std::path::PathBuf;
@@ -29,7 +31,8 @@ fn main() {
         required path: PathBuf
     };
     let contents = fs::read_to_string(flags.path.to_str().expect("Unable to read the file")).expect("Unable to read the file");
-    let program = program_parser::parse_program(&contents);
+    let mut program = program_parser::parse_program(&contents);
+    optimize_reassigns(&mut program);
     let translated = crate::program_translator::translate_program(program);
     if flags.preety {
         crate::boat_instructions::translated_debug(&translated);
@@ -42,33 +45,5 @@ fn main() {
     } else {
         crate::boat_instructions::translated_to_string(translated)
     };
-    println!("{}", text);
-}
-
-#[cfg(debug_assertions)]
-fn main() {
-    
-    let contents = "
-    input = in(1);
-    print = out(1);
-    {
-        max = input();
-        i = 1;
-        sum = 1;
-        while (max > i) {
-            sum = sum * i;
-            i = i + 1;
-        }
-        print(\"result:\");
-        print(sum);
-    }
-    ";
-
-    // Open the file, read it, and parse it
-    let program = program_parser::parse_program(contents);
-    let translated = crate::program_translator::translate_program(program);
-    crate::boat_instructions::translated_debug(&translated);
-    crate::interpreter::interpret(&translated, false);
-    let text = crate::boat_instructions::translated_to_string(translated);
     println!("{}", text);
 }
