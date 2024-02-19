@@ -94,7 +94,7 @@ pub fn translated_to_string(inses: Vec<BoatIns>) -> String {
 }
 
 pub fn translated_to_string2(inses: Vec<BoatIns>) -> String {
-    let mut s = inses
+    let s = inses
         .into_iter()
         .enumerate()
         .map(|(i, ins)| format!("|{}|{ins}", i + 1))

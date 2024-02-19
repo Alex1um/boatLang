@@ -31,7 +31,13 @@ fn main() {
         required path: PathBuf
     };
     let contents = fs::read_to_string(flags.path.to_str().expect("Unable to read the file")).expect("Unable to read the file");
-    let mut program = program_parser::parse_program(&contents);
+    let mut program = match program_parser::parse_program(&contents) {
+        Ok(program) => program,
+        Err(e) => {
+            println!("{}", e);
+            return;
+        }
+    };
     optimize_reassigns(&mut program);
     let translated = crate::program_translator::translate_program(program);
     if flags.preety {
