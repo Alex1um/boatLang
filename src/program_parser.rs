@@ -81,9 +81,9 @@ pub fn parse_block(pairs: Pairs<Rule>) -> Block {
     }).collect()
 }
 
-pub fn parse_program(s: &str) -> Program {
+pub fn parse_program(s: &str) -> Result<Program, pest::error::Error<Rule>> {
     let mut functions = HashMap::<String, Function>::new();
-    let mut parsed = ProgramParser::parse(Rule::program, s).unwrap();
+    let mut parsed = ProgramParser::parse(Rule::program, s)?;
     let mut program = parsed.next().unwrap().into_inner();
     let definitions_pairs = program.next().unwrap().into_inner();
     let main_block_pairs = program.next().unwrap().into_inner();
@@ -106,5 +106,5 @@ pub fn parse_program(s: &str) -> Program {
         vec![ BoatIns { cmd: BoatCmd::Sleep, args } ]
     }) });
     let block = parse_block(main_block_pairs);
-    Program { functions, block }
+    Ok(Program { functions, block })
 }
