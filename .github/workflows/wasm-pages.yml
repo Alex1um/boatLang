@@ -15,7 +15,7 @@ jobs:
               with:
                 ref: gh-pages
             - name: rebase
-              run: git fetch && git rebase -Xtheirs origin master
+              run: git fetch && git rebase -Xtheirs origin/master
             - name: Install wasm-pack
               run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
             - name: Build
