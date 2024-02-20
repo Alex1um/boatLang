@@ -1,4 +1,3 @@
-# write action that on master push: pulls changes, runs wasm-pack build --target web and pushes pkg to gh-pages branch
 name: wasm-pages
 
 on:
@@ -22,7 +21,9 @@ jobs:
             - name: add
               run: git add -f pkg
             - name: commit
-              run : git commit -m "Auto pkg"
+              run : git commit -m "Auto wasm"
+            - name: pull
+              run: git pull origin gh-pages
             - name: push
               uses: ad-m/github-push-action@master
               with:
