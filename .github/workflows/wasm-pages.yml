@@ -1,3 +1,4 @@
+# write action that on master push: pulls changes, runs wasm-pack build --target web and pushes pkg to gh-pages branch
 name: wasm-pages
 
 on:
@@ -8,28 +9,14 @@ on:
 jobs:
     wasm-pages:
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
         steps:
-            - uses: actions/checkout@v3
-              with:
-                ref: gh-pages
-            - name: configure git
-              run: git config user.name GitHub && git config user.email noreply@github.com
-            - name: rebase
-              run: git fetch && git rebase -Xtheirs origin/master
+            - uses: actions/checkout@v4
             - name: Install wasm-pack
               run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
             - name: Build
               run: wasm-pack build --target web
-            - name: add
-              run: git add -f pkg
-            - name: commit
-              run : git commit -m "Auto wasm"
-            # - name: pull
-            #   run: git pull --rebase=true origin gh-pages
-            - name: push
-              uses: ad-m/github-push-action@master
+            - name: Deploy
+              uses: peaceiris/actions-gh-pages@v3
               with:
-                github_token: ${{ secrets.GITHUB_TOKEN }}
-                branch: "gh-pages"
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./pkg
