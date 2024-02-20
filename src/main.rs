@@ -22,8 +22,8 @@ fn main() {
         optional -i,--interpret
         /// Print prettified compiled code
         optional -p,--preety
-        /// Use programs v2
-        optional -v2,--version2
+        /// Use old program type
+        optional -l,--legacy
         /// Use debug mode in interpreter
         optional -d,--debug
         /// File or directory to parse
@@ -45,10 +45,10 @@ fn main() {
     if flags.interpret {
         crate::interpreter::interpret(&translated, flags.debug);
     }
-    let text = if flags.version2 {
-        crate::boat_instructions::translated_to_string2(translated)
-    } else {
+    let text = if flags.legacy {
         crate::boat_instructions::translated_to_string(translated)
+    } else {
+        crate::boat_instructions::translated_to_string2(translated)
     };
     println!("{}", text);
 }
