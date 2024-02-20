@@ -19,5 +19,9 @@ jobs:
               run: wasm-pack build --target web
             - name: configure git
               run: git config user.name GitHub && git config user.email noreply@github.com
-            - name: Deploy
-              run: git add -f pkg && git commit -m "Deploy to gh-pages" && git push origin gh-pages
+            - name: add
+              run: git add -f pkg
+            - name: commit
+              run : git commit -m "Auto pkg"
+            - name: push
+              run: git push origin gh-pages
