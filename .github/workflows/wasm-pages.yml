@@ -17,9 +17,7 @@ jobs:
               run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
             - name: Build
               run: wasm-pack build --target web
+            - name: configure git
+              run: git config user.name GitHub && git config user.email noreply@github.com
             - name: Deploy
-              uses: crazy-max/ghaction-github-pages@v4
-              with:
-                build_dir: pkg
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: git add -f pkg && git commit -m "Deploy to gh-pages" && git push origin gh-pages
