@@ -14,14 +14,14 @@ jobs:
             - uses: actions/checkout@v3
               with:
                 ref: gh-pages
+            - name: configure git
+              run: git config user.name GitHub && git config user.email noreply@github.com
             - name: rebase
               run: git fetch && git rebase -Xtheirs origin/master
             - name: Install wasm-pack
               run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
             - name: Build
               run: wasm-pack build --target web
-            - name: configure git
-              run: git config user.name GitHub && git config user.email noreply@github.com
             - name: add
               run: git add -f pkg
             - name: commit
