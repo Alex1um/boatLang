@@ -18,4 +18,11 @@ jobs:
             - name: Build
               run: wasm-pack build --target web
             - name: Deploy
-              run: git add -f pkg && git commit -m "Deploy to gh-pages" && git push -f origin gh-pages
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                BASE_BRANCH: master
+                BRANCH: gh-pages
+                CLEAN: true
+                FOLDER: ./pkg
+                SSH: true
+                ssh-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
