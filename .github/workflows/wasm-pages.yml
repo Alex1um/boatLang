@@ -1,0 +1,22 @@
+# write action that on master push: pulls changes, runs wasm-pack build --target web and pushes pkg to gh-pages branch
+name: wasm-pages
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    wasm-pages:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Install wasm-pack
+              run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+            - name: Build
+              run: wasm-pack build --target web
+            - name: Deploy
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./pkg
