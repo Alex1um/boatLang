@@ -17,7 +17,7 @@ jobs:
             - name: configure git
               run: git config user.name GitHub && git config user.email noreply@github.com
             - name: rebase
-              run: git fetch && git rebase -Xtheirs origin/master && git pull -Xtheirs
+              run: git fetch && git rebase -Xtheirs origin/master && git pull -Xtheirs --rebase=true
             - name: Install wasm-pack
               run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
             - name: Build
