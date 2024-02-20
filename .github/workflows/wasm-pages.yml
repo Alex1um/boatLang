@@ -20,10 +20,12 @@ jobs:
               run: git config user.name GitHub && git config user.email noreply@github.com
             - name: add
               run: git add -f pkg
+            - name: checkout
+              run: git checkout -b gh-pages
             - name: commit
               run : git commit -m "Auto wasm"
-            - name: pull
-              run: git pull --rebase=true origin gh-pages
+            # - name: pull
+            #   run: git pull --rebase=true origin gh-pages
             - name: push
               uses: ad-m/github-push-action@master
               with:
