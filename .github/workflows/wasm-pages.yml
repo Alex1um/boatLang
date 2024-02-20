@@ -23,7 +23,7 @@ jobs:
             - name: commit
               run : git commit -m "Auto wasm"
             - name: pull
-              run: git pull origin gh-pages
+              run: git pull --rebase=true origin gh-pages
             - name: push
               uses: ad-m/github-push-action@master
               with:
