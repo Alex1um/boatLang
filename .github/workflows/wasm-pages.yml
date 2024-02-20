@@ -18,11 +18,7 @@ jobs:
             - name: Build
               run: wasm-pack build --target web
             - name: Deploy
-              uses: JamesIves/github-pages-deploy-action@v4
+              uses: peaceiris/actions-gh-pages@v3
               with:
-                BASE_BRANCH: master
-                BRANCH: gh-pages
-                CLEAN: true
-                FOLDER: ./pkg
-                SSH: true
-                ssh-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: .
