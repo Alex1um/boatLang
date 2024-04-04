@@ -23,12 +23,12 @@ jobs:
             - name: commit
               run : git commit -m "Auto wasm"
             - name: Commit and push changes to gh-pages
-                run: |
-                  git config --local user.email "action@github.com"
-                  git config --local user.name "GitHub Action"
-                  git checkout --orphan gh-pages
-                  git rm -rf .
-                  cp -a ./dist/. .
-                  git add -A
-                  git commit -m "Deploy to gh-pages"
-                  git push origin gh-pages --force
+              run: |
+                git config --local user.email "action@github.com"
+                git config --local user.name "GitHub Action"
+                git checkout --orphan gh-pages
+                git rm -rf .
+                cp -a ./dist/. .
+                git add -A
+                git commit -m "Deploy to gh-pages"
+                git push origin gh-pages --force
