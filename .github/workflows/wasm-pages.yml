@@ -22,7 +22,7 @@ jobs:
               run: wasm-pack build --target web
             - name: Commit and push changes to gh-pages
               run: |
-                git branch -d gh-pages
+                git branch -D gh-pages
                 git checkout --orphan gh-pages
                 # git rm -rf .
                 # cp -a ./dist/. .
