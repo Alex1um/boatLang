@@ -132,7 +132,6 @@ pub fn interpret(program: &Vec<BoatIns>, debug: bool) {
             },
             BoatCmd::Sleep => {
                 let arg1 = get_arg(args.get(0).expect("kvset has 1 arg"), &mut stack, &kvs);
-                println!("sleeping for {arg1}...");
                 sleep(Duration::from_secs_f64(arg1.parse().expect("arg1 is f64")));
             }
         };
