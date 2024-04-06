@@ -43,7 +43,8 @@ fn main() {
     }
     if flags.interpret {
         let out = io::stdout();
-        crate::interpreter::interpret(&translated, out, flags.debug);
+        let inp = io::stdin().lock();
+        crate::interpreter::interpret(&translated, out, inp, flags.debug);
     }
     let text = if flags.legacy {
         crate::boat_instructions::translated_to_string(translated)

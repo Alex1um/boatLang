@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::Write, io::stdin, thread::sleep, time::Duration};
+use std::{collections::HashMap, io::{Write, BufRead, Read}, io::stdin, thread::sleep, time::Duration};
 
 use crate::boat_instructions::{BoatCmd, BoatIns, BoatArg};
 
@@ -12,7 +12,7 @@ fn get_arg(arg: &BoatArg, stack: &mut Vec<String>, kvs: &Kvs) -> String {
     }
 }
 
-pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, debug: bool) {
+pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, mut input: impl BufRead, debug: bool) {
     let mut stack = Vec::<String>::new();
     let mut kvs = Kvs::new();
     let mut i = 0;
@@ -21,8 +21,6 @@ pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, debug: bool) {
         let ins = &program[i];
         if debug {
             writeln!(output, "{}| {ins} -- {:?} -- {:?}", i + 1, stack, kvs);
-            let mut s = String::new();
-            stdin().read_line(&mut s);
         }
         let BoatIns {args, cmd} = ins;
         match cmd {
@@ -36,7 +34,7 @@ pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, debug: bool) {
             },
             BoatCmd::Input => {
                 let mut s = String::new();
-                stdin().read_line(&mut s).unwrap();
+                input.read_line(&mut s).expect("success read");
                 stack.push(s.trim().to_string());
             },
             BoatCmd::Output => {
