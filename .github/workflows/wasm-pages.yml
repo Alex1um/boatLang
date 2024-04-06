@@ -22,6 +22,8 @@ jobs:
               run: wasm-pack build --target web
             - name: Checkout gh-pages
               run: git checkout gh-pages || git checkout --orphan gh-pages
+            - name: Copy index.html
+              run: cp index.html pkg
             - name: Clear existing content
               run: git rm -rf .
             - name: Commit and push changes to gh-pages
@@ -29,7 +31,6 @@ jobs:
                 # git rm -rf .
                 # cp -a ./dist/. .
                 git add -f pkg
-                git add -f index.html
                 # git add -A
                 git commit -m "Deploy to gh-pages"
                 git push origin gh-pages --force
