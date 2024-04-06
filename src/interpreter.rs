@@ -40,19 +40,7 @@ pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, mut input: impl
             BoatCmd::Output => {
                 let out_num = get_arg(args.get(0).expect("Output has 1 arg"), &mut stack, &kvs);
                 let out = get_arg(args.get(1).expect("Output has 2 args"), &mut stack, &kvs);
-                match out_num.as_str() {
-                    "4" => {
-                        // 7x7 display
-                        out.chars()
-                            .collect::<Vec<char>>()
-                            .chunks(7)
-                            .for_each(|c| writeln!(output, "{}", c.iter().collect::<String>()).expect("write to output"));
-                        writeln!(output, "");
-                    }
-                    _ => {
-                        writeln!(output, "{out_num} <- {out}");
-                    }
-                }
+                writeln!(output, "{out_num} <- {out}");
             },
             BoatCmd::Add => {
                 let arg1 = get_arg(args.get(0).expect("operation has 1 arg"), &mut stack, &kvs);
