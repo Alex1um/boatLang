@@ -48,8 +48,9 @@
         const dest = document.getElementById('program-dest');
         const out = document.getElementById('program-output');
         const dbg = document.getElementById('debug');
+        const legacy = document.getElementById('legacy');
         document.getElementById("compile").onclick = function() {
-          dest.value = boat_lang_compile(src.value);
+          dest.value = boat_lang_compile(src.value, legacy.checked);
         }
         document.getElementById("interpret").onclick = function() {
           out.value = boat_lang_interpret(src.value, dbg.checked);
@@ -59,9 +60,12 @@
     </script>
     <textarea id="program-src"></textarea>
     <button id="compile">Compile</button>
+    <label>Use legacy code</label>
+    <input type="checkbox" id="legacy">
     <textarea id="program-dest"></textarea>
     <button id="interpret">Iterpret</button>
-    <input type="checkbox" id="debug">Debug</button>
+    <label>Debug</label>
+    <input type="checkbox" id="debug">
     <textarea id="program-output"></textarea>
   </body>
 </html>

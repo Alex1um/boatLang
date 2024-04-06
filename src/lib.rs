@@ -66,7 +66,7 @@ mod wasm {
     }
 
     #[wasm_bindgen]
-    pub fn boat_lang_compile(contents: String) -> String {
+    pub fn boat_lang_compile(contents: String, legacy: bool) -> String {
         let mut program = match program_parser::parse_program(&contents) {
             Ok(program) => program,
             Err(e) => {
@@ -76,7 +76,11 @@ mod wasm {
         };
         program_optimizer:: optimize_reassigns(&mut program);
         let translated = crate::program_translator::translate_program(program);
-        crate::boat_instructions::translated_to_string2(translated)
+        if legacy {
+            crate::boat_instructions::translated_to_string(translated)
+        } else {
+            crate::boat_instructions::translated_to_string2(translated)
+        }
     }
 
     #[wasm_bindgen]
