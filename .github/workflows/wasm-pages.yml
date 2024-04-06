@@ -25,7 +25,7 @@ jobs:
             - name: Install wasm-pack
               run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
             - name: Build
-              run: wasm-pack build --target web
+              run: wasm-pack build --target web --no-pack --no-typescript
             - name: Checkout gh-pages
               run: git checkout gh-pages || git checkout --orphan gh-pages
             - name: Copy index.html
