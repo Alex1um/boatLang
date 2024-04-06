@@ -41,7 +41,7 @@ mod wasm {
         program_optimizer:: optimize_reassigns(&mut program);
         let translated = crate::program_translator::translate_program(program);
         let mut out = Vec::<u8>::new();
-        crate::interpreter::interpret(&translated, &mut out, flags.debug);
+        crate::interpreter::interpret(&translated, &mut out, debug);
         String::from_utf8(out).expect("output is valid utf8")
     }
 }
