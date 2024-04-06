@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::stdin, thread::sleep, time::Duration};
+use std::{collections::HashMap, io::Write, io::stdin, thread::sleep, time::Duration};
 
 use crate::boat_instructions::{BoatCmd, BoatIns, BoatArg};
 
@@ -12,7 +12,7 @@ fn get_arg(arg: &BoatArg, stack: &mut Vec<String>, kvs: &Kvs) -> String {
     }
 }
 
-pub fn interpret(program: &Vec<BoatIns>, debug: bool) {
+pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, debug: bool) {
     let mut stack = Vec::<String>::new();
     let mut kvs = Kvs::new();
     let mut i = 0;
@@ -20,7 +20,7 @@ pub fn interpret(program: &Vec<BoatIns>, debug: bool) {
     while i < l {
         let ins = &program[i];
         if debug {
-            println!("{}| {ins} -- {:?} -- {:?}", i + 1, stack, kvs);
+            writeln!(output, "{}| {ins} -- {:?} -- {:?}", i + 1, stack, kvs);
             let mut s = String::new();
             stdin().read_line(&mut s);
         }
@@ -48,11 +48,11 @@ pub fn interpret(program: &Vec<BoatIns>, debug: bool) {
                         out.chars()
                             .collect::<Vec<char>>()
                             .chunks(7)
-                            .for_each(|c| println!("{}", c.iter().collect::<String>()));
-                        println!("");
+                            .for_each(|c| writeln!(output, "{}", c.iter().collect::<String>()).expect("write to output"));
+                        writeln!(output, "");
                     }
                     _ => {
-                        println!("{out}");
+                        writeln!(output, "{out_num} <- {out}");
                     }
                 }
             },

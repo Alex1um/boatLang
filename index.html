@@ -46,8 +46,13 @@
         // And afterwards we can use all the functionality defined in wasm.
         const src = document.getElementById('program-src');
         const dest = document.getElementById('program-dest');
+        const out = document.getElementById('program-output');
+        const debug = document.getElementById('debug');
         document.getElementById("compile").onclick = function() {
           dest.value = boat_lang_compile(src.value);
+        }
+        document.getElementById("interpret").onclick = function() {
+          out.value = boat_lang_interpret(dest.value, debug.value);
         }
       }
 
@@ -56,5 +61,8 @@
     <textarea id="program-src"></textarea>
     <button id="compile">Compile</button>
     <textarea id="program-dest"></textarea>
+    <button id="interpret">Iterpret</button>
+    <input type="checkbox" id="debug">Debug</button>
+    <textarea id="program-output"></textarea>
   </body>
 </html>

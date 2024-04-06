@@ -26,17 +26,22 @@ mod wasm {
         };
         program_optimizer:: optimize_reassigns(&mut program);
         let translated = crate::program_translator::translate_program(program);
-        // if flags.preety {
-        //     crate::boat_instructions::translated_debug(&translated);
-        // }
-        // if flags.interpret {
-        //     crate::interpreter::interpret(&translated, flags.debug);
-        // }
-        // let text = if flags.version2 {
-            crate::boat_instructions::translated_to_string2(translated)
-        // } else {
-        //     crate::boat_instructions::translated_to_string(translated)
-        // };
-        // text
+        crate::boat_instructions::translated_to_string2(translated)
+    }
+
+    #[wasm_bindgen]
+    pub fn boat_lang_interpret(contents: String, debug: bool) -> String {
+        let mut program = match program_parser::parse_program(&contents) {
+            Ok(program) => program,
+            Err(e) => {
+                // println!("{}", e);
+                return format!("{e}");
+            }
+        };
+        program_optimizer:: optimize_reassigns(&mut program);
+        let translated = crate::program_translator::translate_program(program);
+        let mut out = Vec::<u8>::new();
+        crate::interpreter::interpret(&translated, &mut out, flags.debug);
+        String::from_utf8(out).expect("output is valid utf8")
     }
 }

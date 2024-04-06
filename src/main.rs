@@ -9,8 +9,7 @@ mod boat_program;
 mod program_translator;
 mod interpreter;
 mod program_optimizer;
-
-
+use std::io;
 
 
 fn main() {
@@ -43,7 +42,8 @@ fn main() {
         crate::boat_instructions::translated_debug(&translated);
     }
     if flags.interpret {
-        crate::interpreter::interpret(&translated, flags.debug);
+        let out = io::stdout();
+        crate::interpreter::interpret(&translated, out, flags.debug);
     }
     let text = if flags.legacy {
         crate::boat_instructions::translated_to_string(translated)
