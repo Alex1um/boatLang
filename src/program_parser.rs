@@ -105,6 +105,9 @@ pub fn parse_program(s: &str) -> Result<Program, pest::error::Error<Rule>> {
     functions.insert("sleep".to_owned(), Function::Predefined { translator: Box::new(|args: Vec<BoatArg>| {
         vec![ BoatIns { cmd: BoatCmd::Sleep, args } ]
     }) });
+    functions.insert("display".to_owned(), Function::Predefined { translator: Box::new(|args: Vec<BoatArg>| {
+        vec![ BoatIns { cmd: BoatCmd::Display, args } ]
+    }) });
     let block = parse_block(main_block_pairs);
     Ok(Program { functions, block })
 }

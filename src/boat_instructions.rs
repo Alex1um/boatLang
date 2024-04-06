@@ -19,6 +19,7 @@ pub enum BoatCmd {
     Eq, // Pop two values from top of stack and push 1 if they are equal or 0
     Gt, // Pop two values from top of stack and push 1 if the first is greater than the second or 0
     Sleep,
+    Display,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -55,6 +56,7 @@ impl Display for BoatCmd {
             Lt => write!(f, "<"),
             Gt => write!(f, ">"),
             Sleep => write!(f, "s"),
+            Display => write!(f, "di"),
         }
     }
 }
