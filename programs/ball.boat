@@ -1,11 +1,9 @@
-display = out(4);
 dclear = out(5);
 {
     ball_x = 0;
     ball_y = 0;
     vx = 1;
     vy = 1;
-    todisp = 0;
     while (1) {
         if (ball_x > 4) {
             vx = -1;
@@ -21,8 +19,7 @@ dclear = out(5);
         }
         ball_x = ball_x + vx;
         ball_y = ball_y + vy;
-        todisp = ball_x .. "g" .. ball_y .. "g9";
         dclear(1);
-        display(todisp);
+        display(ball_x, ball_y);
     }
 }

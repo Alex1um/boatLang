@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::{Write, BufRead, Read}, io::stdin, thread::sleep, time::Duration};
+use std::{collections::HashMap, io::{Write, BufRead, Read}, path::Display, thread::sleep, time::Duration};
 
 use crate::boat_instructions::{BoatCmd, BoatIns, BoatArg};
 
@@ -131,6 +131,9 @@ pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, mut input: impl
             BoatCmd::Sleep => {
                 let arg1 = get_arg(args.get(0).expect("kvset has 1 arg"), &mut stack, &kvs);
                 sleep(Duration::from_secs_f64(arg1.parse().expect("arg1 is f64")));
+            }
+            BoatCmd::Display => {
+                unimplemented!();
             }
         };
         i += 1;
