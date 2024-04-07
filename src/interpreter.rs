@@ -123,6 +123,9 @@ pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, mut input: impl
             BoatCmd::Display => {
                 unimplemented!();
             }
+            BoatCmd::DisplayClear => {
+                unimplemented!();
+            }
         };
         i += 1;
     }

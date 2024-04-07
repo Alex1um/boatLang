@@ -20,6 +20,7 @@ pub enum BoatCmd {
     Gt, // Pop two values from top of stack and push 1 if the first is greater than the second or 0
     Sleep,
     Display,
+    DisplayClear,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -57,6 +58,7 @@ impl Display for BoatCmd {
             Gt => write!(f, ">"),
             Sleep => write!(f, "s"),
             Display => write!(f, "di"),
+            DisplayClear => write!(f, "dc"),
         }
     }
 }
@@ -74,7 +76,7 @@ impl Display for BoatArg {
 impl Display for BoatIns {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.args.is_empty() {
-            write!(f, "{};", self.cmd)?;
+            write!(f, "{}", self.cmd)?;
         } else {
             let args = self.args
                 .iter()
