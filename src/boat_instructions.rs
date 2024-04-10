@@ -5,22 +5,22 @@ pub enum BoatCmd {
     Push, // Push value on top of stack
     Goto, // Go to instruction with index
     Input, // Block until input value from pin and push it on top of stack
-    Output, // Pop value from top of stack and output it to pin
-    Add, // Pop two values from top of stack and push their sum
-    Sub, // Pop two values from top of stack and push their difference
-    Mul, // Pop two values from top of stack and push their product
-    Div, // Pop two values from top of stack and push their quotient
-    Conc, // Pop two values from top of stack and push their concatenation
-    KVReSet, // Pop value from top of stack and set key to that value on key-value storage
-    KVSet, // Pop value from top of stack and set key to that value on key-value storage
+    Output, // Output to pin at pos 1 value at pos 2
+    Add, // Push sum of two values to stack
+    Sub, // Push difference of two values to stack
+    Mul, // Push product of two values to stack
+    Div, // Push quotient of two values to stack
+    Conc, // Push concatenation of two values to stack
+    KVReSet, // Drops existing key and assign to value in key-value storage.
+    KVSet, // Set key to value in key-value storage
     KVDel, // Delete value by key from key-value storage
-    Cmp, // Pop value from top of stack and goto instruction if it is 1
-    Lt, // Pop two values from top of stack and push 1 if they are equal or 0
-    Eq, // Pop two values from top of stack and push 1 if they are equal or 0
-    Gt, // Pop two values from top of stack and push 1 if the first is greater than the second or 0
-    Sleep,
-    Display,
-    DisplayClear,
+    Cmp, // goto instruction at pos 2 if pos 1 value is 1
+    Lt, // Push 1 if the first is less than the second one or 0
+    Eq, // Push 1 if values are equal or 0
+    Gt, // Push 1 if the first is greater than the second or 0
+    Sleep, // Do nothing for a duration
+    Display, // Paint 7x7 display pixel in x, y
+    DisplayClear, // Clear 7x7 display
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -97,20 +97,18 @@ pub fn translated_to_string(inses: Vec<BoatIns>) -> String {
         .join("")
 }
 
-pub fn translated_to_string2(inses: Vec<BoatIns>) -> String {
-    let s = inses
+pub fn translated_to_string2(inses: Vec<BoatIns>, preety: bool) -> String {
+    let iter = inses
         .into_iter()
-        .enumerate()
-        .map(|(i, ins)| format!("|{}|{ins}", i + 1))
-        .collect::<Vec<String>>()
-        .join("");
-    s
-}
-
-pub fn translated_debug(inses: &Vec<BoatIns>) {
-    let len = inses.len().to_string().len();
-    for (i, ins) in inses.iter().enumerate() {
-        let line = i + 1;
-        println!("{line:>len$}| {ins}");
+        .enumerate();
+    if preety {
+        let len = iter.len().to_string().len();
+        iter.map(|(i, ins)| format!("{:>len$}|{ins}", i + 1))
+            .collect::<Vec<String>>()
+            .join("\n")
+    } else {
+        iter.map(|(i, ins)| format!("|{}|{ins}", i + 1))
+            .collect::<Vec<String>>()
+            .join("")
     }
 }

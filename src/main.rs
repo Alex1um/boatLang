@@ -38,9 +38,6 @@ fn main() {
     };
     optimize_reassigns(&mut program);
     let translated = crate::program_translator::translate_program(program);
-    if flags.preety {
-        crate::boat_instructions::translated_debug(&translated);
-    }
     if flags.interpret {
         let out = io::stdout();
         let inp = io::stdin().lock();
@@ -49,7 +46,7 @@ fn main() {
     let text = if flags.legacy {
         crate::boat_instructions::translated_to_string(translated)
     } else {
-        crate::boat_instructions::translated_to_string2(translated)
+        crate::boat_instructions::translated_to_string2(translated, flags.preety)
     };
     println!("{}", text);
 }
