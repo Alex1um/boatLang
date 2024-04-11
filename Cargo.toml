@@ -16,6 +16,9 @@ members = [
     "cli",
     "web"
 ]
+default-members = [
+    "cli"
+]
 
 [lib]
 crate-type = ["staticlib", "rlib"]
