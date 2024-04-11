@@ -2,7 +2,7 @@
 name = "boat_lang"
 version = "0.1.0"
 edition = "2021"
-default-run = "boat-lang-compiler-cli"
+# default-run = "boat-lang-compiler-cli"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,16 +10,14 @@ default-run = "boat-lang-compiler-cli"
 pest="2.7.6"
 pest_derive="2.7.6"
 lazy_static = "1.4.0"
-xflags = "0.3.2"
 
-[[bin]]
-name="boat-lang-compiler-cli"
-path="src/main.rs"
+[workspace]
+members = [
+    "cli",
+    "web"
+]
 
 [lib]
-crate-type = ["cdylib", "rlib"]
-name="boat_lang_web"
+crate-type = ["staticlib", "rlib"]
+name="boat_lang_core"
 path="src/lib.rs"
-
-[target.wasm32-unknown-unknown.dependencies]
-wasm-bindgen="0.2.91"

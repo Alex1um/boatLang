@@ -1,14 +1,13 @@
-use crate::program_optimizer::optimize_reassigns;
+extern crate boat_lang_core;
 
-mod expr_parser;
-mod expr_optimizer;
-mod expr_translator;
-mod program_parser;
-mod boat_instructions;
-mod boat_program;
-mod program_translator;
-mod interpreter;
-mod program_optimizer;
+use crate::boat_lang_core::{
+    program_parser,
+    program_translator,
+    program_optimizer,
+    interpreter,
+    boat_instructions,
+};
+
 use std::io;
 
 
@@ -36,17 +35,17 @@ fn main() {
             return;
         }
     };
-    optimize_reassigns(&mut program);
-    let translated = crate::program_translator::translate_program(program);
+    program_optimizer::optimize_reassigns(&mut program);
+    let translated = program_translator::translate_program(program);
     if flags.interpret {
         let out = io::stdout();
         let inp = io::stdin().lock();
-        crate::interpreter::interpret(&translated, out, inp, flags.debug);
+        interpreter::interpret(&translated, out, inp, flags.debug);
     }
     let text = if flags.legacy {
-        crate::boat_instructions::translated_to_string(translated)
+        boat_instructions::translated_to_string(translated)
     } else {
-        crate::boat_instructions::translated_to_string2(translated, flags.preety)
+        boat_instructions::translated_to_string2(translated, flags.preety)
     };
     println!("{}", text);
 }
