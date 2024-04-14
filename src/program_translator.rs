@@ -56,9 +56,9 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
         }
         Statement::Return(expr) => {
             let mut instructions = Vec::<BoatIns>::new();
-            let is_push_needed = matches!(expr, BoatExpr::Value(_) | BoatExpr::Var(_));
+            // let is_push_needed = matches!(expr, BoatExpr::Value(_) | BoatExpr::Var(_));
             let arg = translate_expr(expr, instruction_index, &mut instructions, functions);
-            if is_push_needed {
+            if arg != BoatArg::FromStack {
                 *instruction_index += 1;
                 instructions.push(BoatIns { cmd: BoatCmd::Push, args: vec![arg] });
             }
