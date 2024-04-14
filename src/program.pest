@@ -52,9 +52,10 @@ while = { "while" ~ "(" ~ expr ~ ")" ~ block }
 assign = { name ~ "=" ~ expr ~ ";" }
 expr_statement = _{ expr ~ ";" }
 function_definition = { "function" ~ name ~ "(" ~ (name ~ ("," ~ name)*)? ~ ")" ~ block }
+return = { "return" ~ expr ~ ";" }
 
 
-statement = _{ function_definition | if | while | assign | expr_statement }
+statement = _{ function_definition | if | while | assign | return | expr_statement }
 
 block = { "{" ~ statement* ~ "}" | statement }
 

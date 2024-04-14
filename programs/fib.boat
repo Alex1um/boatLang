@@ -3,12 +3,12 @@ input = in(1);
 {
     function fib(a) {
         if (a == 1) {
-            1;
+            return 1;
         } else {
             if (a == 2) {
-                1;
+                return 1;
             } else {
-                fib(a - 1) + fib(a - 2);
+                return fib(a - 1) + fib(a - 2);
             }
         } 
     }

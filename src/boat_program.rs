@@ -36,6 +36,7 @@ pub enum Statement {
     Reassign { var_name: String, expr: BoatExpr },
     FunctionDefinition { name: String, arg_names: Vec<String>, block: Block },
     Expr(BoatExpr),
+    Return(BoatExpr),
 }
 
 pub type Block = Vec<Statement>;

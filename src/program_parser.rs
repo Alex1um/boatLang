@@ -62,6 +62,10 @@ pub fn parse_block(pairs: Pairs<Rule>) -> Block {
                     expr: parse_pairs(inner.next().unwrap().into_inner()),
                 }
             },
+            Rule::r#return => {
+                let mut inner = pair.into_inner();
+                Statement::Return(parse_pairs(inner.next().unwrap().into_inner()))
+            }
             Rule::expr => {
                 Statement::Expr(parse_pairs(pair.into_inner()))
             }
