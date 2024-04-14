@@ -21,6 +21,8 @@ pub enum BoatCmd {
     Sleep, // Do nothing for a duration
     Display, // Paint 7x7 display pixel in x, y
     DisplayClear, // Clear 7x7 display
+    Store, // Store value at 2 argument into memory at 1 argument(s - stack; kv - kvs)
+    Clear // Clear memory at 1 argument(s - stack; kv - kvs)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -59,6 +61,8 @@ impl Display for BoatCmd {
             Sleep => write!(f, "s"),
             Display => write!(f, "di"),
             DisplayClear => write!(f, "dc"),
+            Store => write!(f, "st"),
+            Clear => write!(f, "clr"),
         }
     }
 }

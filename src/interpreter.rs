@@ -126,6 +126,46 @@ pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, mut input: impl
             BoatCmd::DisplayClear => {
                 unimplemented!();
             }
+            BoatCmd::Store => {
+                let arg1 = get_arg(args.get(0).expect("kvset has 1 arg"), &mut stack, &kvs);
+                let arg2 = get_arg(args.get(1).expect("kvset has 2 args"), &mut stack, &kvs);
+                match arg1.as_str() {
+                    "s" => {
+                        stack = arg2.split(";").map_while(|s| if !s.is_empty() {Some(s.to_string())} else {None}).collect();
+                    }
+                    "kv" => {
+                        kvs.clear();
+                        for s in arg2.split(",").take_while(|s| !s.is_empty()) {
+                            let mut splitted = s.split(':');
+                            let key = splitted.next().expect("kv has key").to_string();
+                            let value = splitted.next().expect("kv has value").to_string();
+                            match kvs.entry(key) {
+                                std::collections::hash_map::Entry::Occupied(mut e) => {
+                                    e.get_mut().push(value);
+                                }
+                                std::collections::hash_map::Entry::Vacant(e) => {
+                                    e.insert(vec![value]);
+                                }
+                            }
+                        }
+                    }
+                    _ => {
+                    }
+                }
+            }
+            BoatCmd::Clear => {
+                let arg1 = get_arg(args.get(0).expect("kvset has 1 arg"), &mut stack, &kvs);
+                match arg1.as_str() {
+                    "s" => {
+                        stack.clear();
+                    }
+                    "kv" => {
+                        kvs.clear();
+                    }
+                    _ => {
+                    }
+                }
+            }
         };
         i += 1;
     }
