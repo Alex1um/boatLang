@@ -9,7 +9,7 @@ use crate::boat_lang_core::{
 };
 extern crate wasm_bindgen;
 use wasm_bindgen::prelude::*;
-use std::io::{BufRead, Read};
+use std::{collections::HashSet, io::{BufRead, Read}};
 
 #[wasm_bindgen]
 extern "C" {
@@ -92,7 +92,7 @@ pub fn boat_lang_interpret(contents: String, debug: bool) -> String {
     };
     program_optimizer::optimize_reassigns(&mut program);
     let mut labeled_lines = HashSet::<u32>::new();
-    let translated = program_translator::translate_program(program, labeled_lines);
+    let translated = program_translator::translate_program(program, &mut labeled_lines);
     let mut out = Vec::<u8>::new();
     interpreter::interpret(&translated, &mut out, JSReader::new(), debug);
     String::from_utf8(out).expect("output is valid utf8")
