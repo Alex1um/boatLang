@@ -1,28 +1,28 @@
-use std::fmt::Display;
+use std::{collections::HashSet, fmt::Display};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BoatCmd {
-    Push, // Push value on top of stack
-    Goto, // Go to instruction with index
-    Input, // Block until input value from pin and push it on top of stack
-    Output, // Output to pin at pos 1 value at pos 2
-    Add, // Push sum of two values to stack
-    Sub, // Push difference of two values to stack
-    Mul, // Push product of two values to stack
-    Div, // Push quotient of two values to stack
-    Conc, // Push concatenation of two values to stack
-    KVReSet, // Drops existing key and assign to value in key-value storage.
-    KVSet, // Set key to value in key-value storage
-    KVDel, // Delete value by key from key-value storage
-    Cmp, // goto instruction at pos 2 if pos 1 value is 1
-    Lt, // Push 1 if the first is less than the second one or 0
-    Eq, // Push 1 if values are equal or 0
-    Gt, // Push 1 if the first is greater than the second or 0
-    Sleep, // Do nothing for a duration
-    Display, // Paint 7x7 display pixel in x, y
+    Push,         // Push value on top of stack
+    Goto,         // Go to instruction with index
+    Input,        // Block until input value from pin and push it on top of stack
+    Output,       // Output to pin at pos 1 value at pos 2
+    Add,          // Push sum of two values to stack
+    Sub,          // Push difference of two values to stack
+    Mul,          // Push product of two values to stack
+    Div,          // Push quotient of two values to stack
+    Conc,         // Push concatenation of two values to stack
+    KVReSet,      // Drops existing key and assign to value in key-value storage.
+    KVSet,        // Set key to value in key-value storage
+    KVDel,        // Delete value by key from key-value storage
+    Cmp,          // goto instruction at pos 2 if pos 1 value is 1
+    Lt,           // Push 1 if the first is less than the second one or 0
+    Eq,           // Push 1 if values are equal or 0
+    Gt,           // Push 1 if the first is greater than the second or 0
+    Sleep,        // Do nothing for a duration
+    Display,      // Paint 7x7 display pixel in x, y
     DisplayClear, // Clear 7x7 display
-    Store, // Store value at 2 argument into memory at 1 argument(s - stack; kv - kvs)
-    Clear // Clear memory at 1 argument(s - stack; kv - kvs)
+    Store,        // Store value at 2 argument into memory at 1 argument(s - stack; kv - kvs)
+    Clear,        // Clear memory at 1 argument(s - stack; kv - kvs)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -43,7 +43,7 @@ impl Display for BoatCmd {
         use BoatCmd::*;
         match self {
             Push => write!(f, "p"),
-            Goto  => write!(f, "g"),
+            Goto => write!(f, "g"),
             Input => write!(f, "i"),
             Output => write!(f, "o"),
             Add => write!(f, "+"),
@@ -54,7 +54,7 @@ impl Display for BoatCmd {
             KVSet => write!(f, "ka"),
             KVDel => write!(f, "kd"),
             KVReSet => write!(f, "kr"),
-            Cmp  => write!(f, "c"),
+            Cmp => write!(f, "c"),
             Eq => write!(f, "="),
             Lt => write!(f, "<"),
             Gt => write!(f, ">"),
@@ -82,7 +82,8 @@ impl Display for BoatIns {
         if self.args.is_empty() {
             write!(f, "{}", self.cmd)?;
         } else {
-            let args = self.args
+            let args = self
+                .args
                 .iter()
                 .map(|arg| format!("{arg}"))
                 .collect::<Vec<String>>()
@@ -101,18 +102,26 @@ pub fn translated_to_string(inses: Vec<BoatIns>) -> String {
         .join("")
 }
 
-pub fn translated_to_string2(inses: Vec<BoatIns>, preety: bool) -> String {
-    let iter = inses
-        .into_iter()
-        .enumerate();
+pub fn translated_to_string2(
+    inses: Vec<BoatIns>,
+    preety: bool,
+    labeled_lines: &HashSet<u32>,
+) -> String {
+    let iter = inses.into_iter().enumerate();
     if preety {
         let len = iter.len().to_string().len();
-        iter.map(|(i, ins)| format!("{:>len$}|{ins}", i + 1))
+        iter.map(|(i, ins)| format!("{:>len$}|{ins};", i + 1))
             .collect::<Vec<String>>()
             .join("\n")
     } else {
-        iter.map(|(i, ins)| format!("|{}|{ins}", i + 1))
-            .collect::<Vec<String>>()
-            .join("")
+        iter.map(|(i, ins)| {
+            if labeled_lines.contains(&((i + 1) as u32)) {
+                format!("{}|{ins};", i + 1)
+            } else {
+                format!("{ins};")
+            }
+        })
+        .collect::<Vec<String>>()
+        .join("")
     }
 }

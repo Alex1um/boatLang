@@ -8,7 +8,7 @@ use crate::boat_lang_core::{
     boat_instructions,
 };
 
-use std::io;
+use std::{collections::HashSet, io};
 
 
 fn main() {
@@ -20,8 +20,6 @@ fn main() {
         optional -i,--interpret
         /// Print prettified compiled code
         optional -p,--preety
-        /// Use old program type
-        optional -l,--legacy
         /// Use debug mode in interpreter
         optional -d,--debug
         /// File or directory to parse
@@ -36,17 +34,14 @@ fn main() {
         }
     };
     program_optimizer::optimize_reassigns(&mut program);
-    let translated = program_translator::translate_program(program);
+    let mut labeled_lines = HashSet::<u32>::new();
+    let translated = program_translator::translate_program(program, &mut labeled_lines);
     if flags.interpret {
         let out = io::stdout();
         let inp = io::stdin().lock();
         interpreter::interpret(&translated, out, inp, flags.debug);
     }
-    let text = if flags.legacy {
-        boat_instructions::translated_to_string(translated)
-    } else {
-        boat_instructions::translated_to_string2(translated, flags.preety)
-    };
+    let text = boat_instructions::translated_to_string2(translated, flags.preety, &labeled_lines);
     println!("{}", text);
 }
 

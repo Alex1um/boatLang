@@ -1,5 +1,6 @@
 use crate::boat_program::{BoatExpr, BoatOp, Function, Functions};
 use crate::boat_instructions::{BoatIns, BoatArg, BoatCmd};
+use std::collections::HashSet;
 
 impl From<BoatOp> for BoatCmd {
     fn from(val: BoatOp) -> Self {
@@ -17,7 +18,7 @@ impl From<BoatOp> for BoatCmd {
     }
 }
 
-pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: &mut Vec<BoatIns>, functions: &Functions) -> BoatArg {
+pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: &mut Vec<BoatIns>, functions: &Functions, labeled_lines: &mut HashSet<u32>) -> BoatArg {
     match arg {
         BoatExpr::Value(value) => BoatArg::Const(value),
         BoatExpr::Var(name) => BoatArg::FromKVS(name),
@@ -26,7 +27,7 @@ pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: 
             let mut translated_args = Vec::<BoatArg>::new();
             args.reverse();
             for arg in args {
-                translated_args.push(translate_expr(arg, instruction_index, instructions, functions))
+                translated_args.push(translate_expr(arg, instruction_index, instructions, functions, labeled_lines))
             }
             translated_args.reverse();
             match function {
@@ -43,6 +44,7 @@ pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: 
                     *instruction_index += 2;
                     instructions.push(BoatIns { cmd: BoatCmd::KVSet, args: vec![BoatArg::Const("return".to_owned()), BoatArg::Const(instruction_index.to_string())] });
                     instructions.push(BoatIns { cmd: BoatCmd::Goto, args: vec![BoatArg::Const(begin_pos.to_string())] });
+                    labeled_lines.insert(*instruction_index);
                     instructions.push(BoatIns { cmd: BoatCmd::KVDel, args: vec![BoatArg::Const("return".to_owned())] });
                     *instruction_index += 1;
                     for name in arg_names {
@@ -55,8 +57,8 @@ pub fn translate_expr(arg: BoatExpr, instruction_index: &mut u32, instructions: 
         },
         BoatExpr::BinOp { lhs, op, rhs } => {
             let mut bin_op_ins = BoatIns { cmd: op.into(), args: vec![] };
-            let rhs_arg = translate_expr(*rhs, instruction_index, instructions, functions);
-            let lhs_arg = translate_expr(*lhs, instruction_index, instructions, functions);
+            let rhs_arg = translate_expr(*rhs, instruction_index, instructions, functions, labeled_lines);
+            let lhs_arg = translate_expr(*lhs, instruction_index, instructions, functions, labeled_lines);
             if rhs_arg == BoatArg::FromStack && lhs_arg == BoatArg::FromStack {
                 bin_op_ins.args.push(rhs_arg);
                 bin_op_ins.args.push(lhs_arg);

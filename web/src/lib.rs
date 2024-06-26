@@ -72,11 +72,12 @@ pub fn boat_lang_compile(contents: String, legacy: bool, preety: bool) -> String
         }
     };
     program_optimizer:: optimize_reassigns(&mut program);
-    let translated = program_translator::translate_program(program);
+    let mut labeled_lines = HashSet::<u32>::new();
+    let translated = program_translator::translate_program(program, &mut labeled_lines);
     if legacy {
         boat_instructions::translated_to_string(translated)
     } else {
-        boat_instructions::translated_to_string2(translated, preety)
+        boat_instructions::translated_to_string2(translated, preety, &labeled_lines)
     }
 }
 
@@ -90,7 +91,8 @@ pub fn boat_lang_interpret(contents: String, debug: bool) -> String {
         }
     };
     program_optimizer::optimize_reassigns(&mut program);
-    let translated = program_translator::translate_program(program);
+    let mut labeled_lines = HashSet::<u32>::new();
+    let translated = program_translator::translate_program(program, labeled_lines);
     let mut out = Vec::<u8>::new();
     interpreter::interpret(&translated, &mut out, JSReader::new(), debug);
     String::from_utf8(out).expect("output is valid utf8")
