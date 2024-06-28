@@ -34,6 +34,7 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
                 *instruction_index += 1;
             }
             statement.push(BoatIns {cmd: BoatCmd::Cmp, args: vec![if_arg, BoatArg::Const(instruction_index.to_string())]});
+            labeled_lines.insert(*instruction_index);
             statement.extend(block);
 
             if let Some(else_block) = else_block {
@@ -52,6 +53,7 @@ fn translate_statement(s: Statement, instruction_index: &mut u32, functions: &mu
             *instruction_index += 1;
             let block = translate_block(block, instruction_index, functions, labeled_lines);
             statement.push(BoatIns { cmd: BoatCmd::Cmp, args: vec![while_arg, BoatArg::Const((*instruction_index + 1u32).to_string())] });
+            labeled_lines.insert(*instruction_index + 1u32);
             statement.extend(block);
             statement.push(BoatIns { cmd: BoatCmd::Goto, args: vec![ BoatArg::Const(while_begin_index.to_string()) ] });
             labeled_lines.insert(while_begin_index);
