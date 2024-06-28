@@ -32,7 +32,7 @@ pub fn interpret(program: &Vec<BoatIns>, mut output: impl Write, mut input: impl
                 i = get_arg(args.first().expect("Goto has 1 arg"), &mut stack, &kvs).parse::<usize>().expect("Goto arg is integer") - 1usize;
                 continue;
             },
-            BoatCmd::Input => {
+            BoatCmd::Input | BoatCmd::InputAsync => {
                 let mut s = String::new();
                 input.read_line(&mut s).expect("success read");
                 stack.push(s.trim().to_string());

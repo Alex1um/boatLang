@@ -5,6 +5,7 @@ pub enum BoatCmd {
     Push,         // Push value on top of stack
     Goto,         // Go to instruction with index
     Input,        // Block until input value from pin and push it on top of stack
+    InputAsync,   // Block until input value from pin or timeout at arg2 in seconds and push it on top of stack
     Output,       // Output to pin at pos 1 value at pos 2
     Add,          // Push sum of two values to stack
     Sub,          // Push difference of two values to stack
@@ -45,6 +46,7 @@ impl Display for BoatCmd {
             Push => write!(f, "p"),
             Goto => write!(f, "g"),
             Input => write!(f, "i"),
+            InputAsync => write!(f, "ia"),
             Output => write!(f, "o"),
             Add => write!(f, "+"),
             Sub => write!(f, "-"),

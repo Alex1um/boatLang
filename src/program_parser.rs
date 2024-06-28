@@ -95,13 +95,14 @@ pub fn parse_program(s: &str) -> Result<Program, pest::error::Error<Rule>> {
     for pin_def in pin_definitions {
         let pin_num = pin_def.pin;
         functions.insert(pin_def.name, Function::Predefined { translator: Box::new(move |mut args: Vec<BoatArg>| {
-            let (tpe, num) = match pin_num {
+            let (mut tpe, num) = match pin_num {
                 PinType::In(i) => (BoatCmd::Input, i),
                 PinType::Out(i) => (BoatCmd::Output, i),
             };
             args.insert(0, BoatArg::Const(num.to_string()));
-            if args.len() == 1 && tpe == BoatCmd::Input {
-                args.insert(1, BoatArg::Const("60".to_owned()));
+            if args.len() == 2 && tpe == BoatCmd::Input {
+                // args.insert(1, BoatArg::Const("60".to_owned()));
+                tpe = BoatCmd::InputAsync;
             }
             vec![ BoatIns { cmd: tpe, args } ]
         }) });
